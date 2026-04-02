@@ -1,0 +1,46 @@
+---
+name: Example quiz
+category: General
+tags:
+  - example
+  - tags
+  - here
+---
+
+What is 2 + 2?
+
+= 4
+
+# Geography
+
+## Countries
+
+What is the capital of France?
+
+(a) London
+(b) Berlin
+= (c) Paris 
+(d) Bangkok
+
+## Continents
+
+Which countries are in Europe, Asia and Africa?
+
+> Europe
+- France
+- Germany
+- Italy
+
+> Africa
+- Egypt
+- Libya
+- Morocco
+
+> Asia
+- China
+- Russia
+Note: also part of Europe
+- Japan
+
+
+

@@ -1,0 +1,214 @@
+use crate::token::{Token, TokenKind};
+
+pub fn lex(input: &str) -> Vec<Token> {
+    let mut tokens = Vec::new();
+    let lines = input.lines().enumerate();
+
+    for (index, line) in lines {
+        let line_number = index + 1;
+
+        let kind = if line.trim() == "---" {
+            TokenKind::FrontmatterDelimiter
+        } else if line.trim().is_empty() {
+            TokenKind::BlankLine
+        } else if let Some((level, text)) = parse_heading(line) {
+            TokenKind::Heading { level, text }
+        } else if let Some((label, text)) = parse_marker_line(line, '=') {
+            TokenKind::CorrectAnswer { label, text }
+        } else if let Some((label, text)) = parse_marker_line(line, '+') {
+            TokenKind::MultiCorrectAnswer { label, text }
+        } else if let Some((label, text)) = parse_marker_line(line, '-') {
+            TokenKind::IncorrectAnswer { label, text }
+        } else if let Some(text) = strip_marker(line, '>') {
+            TokenKind::CategoryHeader { text }
+        } else if let (Some(label), text) = extract_label(line) {
+            TokenKind::IncorrectAnswer {
+                label: Some(label),
+                text,
+            }
+        } else {
+            TokenKind::Text(line.to_string())
+        };
+
+        tokens.push(Token {
+            kind,
+            line: line_number,
+            content: line.to_string(),
+        })
+    }
+
+    tokens
+}
+
+fn parse_heading(line: &str) -> Option<(u8, String)> {
+    let level = line.chars().take_while(|&c| c == '#').count();
+    if level == 0 {
+        return None;
+    }
+    let rest = &line[level..];
+    if rest.starts_with(' ') {
+        Some((level as u8, rest.trim_start().to_string()))
+    } else {
+        None
+    }
+}
+
+fn parse_marker_line(line: &str, marker: char) -> Option<(Option<String>, String)> {
+    let text = strip_marker(line, marker)?;
+    let (label, rest) = extract_label(&text);
+    Some((label, rest))
+}
+
+fn strip_marker(line: &str, marker: char) -> Option<String> {
+    let first = line.chars().next()?;
+    if first != marker {
+        return None;
+    }
+    let rest = &line[1..];
+    if rest.starts_with(' ') {
+        Some(rest.trim_start().to_string())
+    } else {
+        None
+    }
+}
+
+fn extract_label(line: &str) -> (Option<String>, String) {
+    let trimmed = line.trim_start();
+    if !trimmed.starts_with('(') {
+        return (None, line.to_string());
+    }
+
+    let close = match trimmed.find(')') {
+        Some(c) if c > 1 => c,
+        _ => return (None, line.to_string()),
+    };
+
+    let label = &trimmed[1..close];
+    let rest = trimmed[close + 1..].trim_start();
+    (Some(label.to_string()), rest.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use indoc::indoc;
+
+    #[test]
+    fn test_empty_line() {
+        let tokens = lex("");
+        assert_eq!(tokens.len(), 0);
+    }
+
+    #[test]
+    fn test_blank_line() {
+        let tokens = lex(" ");
+        assert_eq!(tokens.len(), 1);
+        assert_eq!(tokens[0].kind, TokenKind::BlankLine);
+    }
+
+    #[test]
+    fn test_frontmatter() {
+        let input = indoc! {"
+            ---
+            some: frontmatter
+
+            ---
+        "};
+        let tokens = lex(input);
+        assert_eq!(tokens.len(), 4);
+        assert_eq!(tokens[0].kind, TokenKind::FrontmatterDelimiter);
+        assert_eq!(
+            tokens[1].kind,
+            TokenKind::Text("some: frontmatter".to_string())
+        );
+        assert_eq!(tokens[2].kind, TokenKind::BlankLine);
+        assert_eq!(tokens[3].kind, TokenKind::FrontmatterDelimiter);
+    }
+
+    #[test]
+    fn test_frontmatter_with_whitespace() {
+        let input = " ---  ";
+        let tokens = lex(input);
+        assert_eq!(tokens.len(), 1);
+        assert_eq!(tokens[0].kind, TokenKind::FrontmatterDelimiter);
+    }
+
+    #[test]
+    fn test_correct_option() {
+        let input = "= Option A";
+        let tokens = lex(input);
+        assert_eq!(tokens.len(), 1);
+        assert_eq!(
+            tokens[0].kind,
+            TokenKind::CorrectAnswer {
+                label: None,
+                text: "Option A".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn test_multi_correct_option() {
+        let input = "+ Option A";
+        let tokens = lex(input);
+        assert_eq!(tokens.len(), 1);
+        assert_eq!(
+            tokens[0].kind,
+            TokenKind::MultiCorrectAnswer {
+                label: None,
+                text: "Option A".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn test_incorrect_option() {
+        let input = "- Option A";
+        let tokens = lex(input);
+        assert_eq!(tokens.len(), 1);
+        assert_eq!(
+            tokens[0].kind,
+            TokenKind::IncorrectAnswer {
+                label: None,
+                text: "Option A".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn test_full_question() {
+        let input = indoc! {"
+            Text
+
+            - (a) Option A
+            (b) Option B
+            = (c) Option C
+        "};
+        let tokens = lex(input);
+        assert_eq!(tokens.len(), 5);
+        assert_eq!(tokens[0].kind, TokenKind::Text("Text".to_string()));
+        assert_eq!(tokens[1].kind, TokenKind::BlankLine);
+        assert_eq!(
+            tokens[2].kind,
+            TokenKind::IncorrectAnswer {
+                label: Some("a".to_string()),
+                text: "Option A".to_string()
+            }
+        );
+        assert_eq!(
+            tokens[3].kind,
+            TokenKind::IncorrectAnswer {
+                label: Some("b".to_string()),
+                text: "Option B".to_string()
+            }
+        );
+
+        assert_eq!(
+            tokens[4].kind,
+            TokenKind::CorrectAnswer {
+                label: Some("c".to_string()),
+                text: "Option C".to_string()
+            }
+        );
+    }
+}
