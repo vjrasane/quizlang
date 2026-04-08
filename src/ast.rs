@@ -1,16 +1,19 @@
-#[derive(Debug)]
+use ::serde::Serialize;
+
+#[derive(Debug, Serialize)]
 pub struct Quiz {
     pub frontmatter: Option<String>,
     pub items: Vec<Item>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Section {
     pub header: String,
     pub items: Vec<Item>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
+#[serde(tag = "type")]
 pub enum Question {
     FreeInput {
         text: String,
@@ -41,7 +44,8 @@ impl Question {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
+#[serde(tag = "item")]
 pub enum Item {
     Section(Section),
     Question(Question),
@@ -63,13 +67,13 @@ impl Item {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Category {
     pub text: String,
     pub answers: Vec<Answer>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Answer {
     pub label: Option<String>,
     pub text: String,
