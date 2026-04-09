@@ -1,34 +1,23 @@
 use crate::ast::*;
 use crate::token::{Token, TokenKind};
 
+use thiserror::Error;
 struct Parser {
     tokens: Vec<Token>,
     pos: usize,
 }
 
-#[derive(Debug)]
-pub struct ParseError {
-    pub line: usize,
-    pub message: String,
-}
-
-impl ParseError {
-    fn unexpected_token(token: &Token, expected: &str) -> Self {
-        ParseError {
-            line: token.line,
-            message: format!(
-                "unexpected token: expected {}, got {:?}",
-                expected, token.kind
-            ),
-        }
-    }
-
-    fn unexpected_eof(expected: &str, line: usize) -> Self {
-        ParseError {
-            line,
-            message: format!("unexpected end of file: expected {}", expected),
-        }
-    }
+#[derive(Debug, Error)]
+#[error("parse error at line {line}: {message}")]
+pub enum ParseError {
+    #[error("line {line}: unexpected token: expected {expected}, got {got:?}")]
+    UnexpectedToken {
+        line: usize,
+        expected: String,
+        got: TokenKind,
+    },
+    #[error("line {line}: unexpected end of file: expected {expected}")]
+    UnexpectedEOF { line: usize, expected: String },
 }
 
 impl Parser {
@@ -42,8 +31,15 @@ impl Parser {
 
     fn unexpected_error(&self, expected: &str) -> ParseError {
         match self.peek() {
-            Some(token) => ParseError::unexpected_token(token, expected),
-            None => ParseError::unexpected_eof(expected, self.tokens.last().map_or(0, |t| t.line)),
+            Some(token) => ParseError::UnexpectedToken {
+                line: token.line,
+                expected: expected.to_string(),
+                got: token.kind.clone(),
+            },
+            None => ParseError::UnexpectedEOF {
+                expected: expected.to_string(),
+                line: self.tokens.last().map_or(0, |t| t.line),
+            },
         }
     }
 
@@ -61,18 +57,6 @@ impl Parser {
         while self.peek().is_some_and(&cond) {
             self.advance();
         }
-    }
-
-    fn collect_while(&mut self, cond: impl Fn(&Token) -> bool) -> Vec<&Token> {
-        let mut result = Vec::new();
-        while let Some(token) = self.peek() {
-            if !cond(token) {
-                break;
-            }
-            result.push(&self.tokens[self.pos]);
-            self.pos += 1;
-        }
-        result
     }
 
     fn skip_blanklines(&mut self) {
@@ -95,18 +79,11 @@ impl Parser {
                 Some(Token {
                     kind: TokenKind::FrontmatterDelimiter,
                     ..
-                }) => {
-                    return Ok(Some(lines.join("\n")));
-                }
+                }) => return Ok(Some(lines.join("\n"))),
                 Some(Token { content, .. }) => {
                     lines.push(content.clone());
                 }
-                None => {
-                    return Err(ParseError::unexpected_eof(
-                        "closing ---",
-                        self.tokens.last().map_or(0, |t| t.line),
-                    ));
-                }
+                None => return Err(self.unexpected_error("closing ---")),
             }
         }
     }
@@ -282,12 +259,7 @@ impl Parser {
                 Some(token) if token.is_text() => {
                     items.push(Item::Question(self.parse_question()?))
                 }
-                Some(token) => {
-                    return Err(ParseError::unexpected_token(
-                        token,
-                        "heading or question text",
-                    ));
-                }
+                Some(_) => return Err(self.unexpected_error("heading or question text")),
                 None => return Ok(items),
             }
         }

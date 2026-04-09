@@ -1,47 +1,79 @@
-use clap::Parser;
-use std::env;
+use clap::{Parser, Subcommand};
+use inquire::InquireError;
 use std::fs;
 
 mod ast;
+mod game;
 mod lexer;
 mod parser;
 mod token;
 
 use crate::ast::*;
+use crate::game::GameState;
+use thiserror::Error;
+
+#[derive(Debug, Error)]
+#[error("{0}")]
+enum CliError {
+    Parse(#[from] parser::ParseError),
+    Inquire(#[from] InquireError),
+    Io(#[from] std::io::Error),
+}
 
 #[derive(Parser)]
 #[command(name = "quiz")]
 struct Cli {
-    /// Path to the quiz file
-    file: String,
+    #[command(subcommand)]
+    command: Command,
+}
 
-    /// Output as JSON
-    #[arg(long)]
-    json: bool,
+#[derive(Subcommand)]
+enum Command {
+    /// Parse and output as JSON
+    Parse {
+        /// Path to the quiz file
+        file: String,
+    },
+    /// Play the quiz interactively
+    Play {
+        /// Path to the quiz file
+        file: String,
+    },
 }
 
 impl Cli {
-    fn output(&self, quiz: &Quiz) {
-        if self.json {
-            println!("{}", serde_json::to_string_pretty(quiz).unwrap());
-        } else {
-            println!("{:#?}", quiz);
+    fn run(&self) -> Result<(), CliError> {
+        match &self.command {
+            Command::Parse { file } => self.cmd_parse(file)?,
+            Command::Play { file } => self.cmd_play(file)?,
         }
+        Ok(())
     }
 
-    fn parse_quiz(&self) {
-        let input = fs::read_to_string(&self.file).expect("failed to read file");
-        let tokens = lexer::lex(&input);
+    fn cmd_play(&self, file: &str) -> Result<(), CliError> {
+        let quiz = self.parse_quiz(file)?;
+        GameState::new().run(&quiz)?;
+        Ok(())
+    }
 
-        match parser::parse(tokens) {
-            Ok(quiz) => self.output(&quiz),
-            Err(err) => eprintln!("parse error at line {}: {}", err.line, err.message),
-        }
+    fn cmd_parse(&self, file: &str) -> Result<(), CliError> {
+        let quiz = self.parse_quiz(file)?;
+        println!("{}", serde_json::to_string_pretty(&quiz).unwrap());
+        Ok(())
+    }
+
+    fn parse_quiz(&self, file: &str) -> Result<Quiz, parser::ParseError> {
+        let input = fs::read_to_string(file).expect("failed to read file");
+        let tokens = lexer::lex(&input);
+        parser::parse(tokens)
     }
 }
 
 fn main() {
     let cli = Cli::parse();
 
-    cli.parse_quiz();
+    if let Err(error) = cli.run() {
+        eprintln!("Error: {}", error);
+        std::process::exit(1);
+    }
 }

@@ -67,13 +67,13 @@ impl Item {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Category {
     pub text: String,
     pub answers: Vec<Answer>,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct Answer {
     pub label: Option<String>,
     pub text: String,
