@@ -58,26 +58,28 @@ impl GameState {
         Ok(())
     }
 
-    fn run_items(&mut self, items: &[Item]) -> Result<(), InquireError> {
+    fn run_items(&mut self, items: &[Section]) -> Result<(), InquireError> {
         for item in items {
-            match item {
-                Item::Section(section) => {
-                    println!("\n=== {} ===\n", section.header);
-                    self.run_items(&section.items)?;
-                }
-                Item::Question(question) => self.ask_question(question)?,
+            let text = match &item.text {
+                Some(t) => format!("\n# {}\n{}\n", item.header, t),
+                None => format!("\n# {}\n", item.header),
+            };
+            if let Some(question) = &item.question {
+                self.ask_question(&text, question)?;
+            } else {
+                println!("{}", text);
             }
         }
         Ok(())
     }
 
-    fn ask_question(&mut self, question: &Question) -> Result<(), InquireError> {
+    fn ask_question(&mut self, text: &str, question: &Question) -> Result<(), InquireError> {
         self.total += 1;
         let result = match question {
-            Question::FreeInput { text, answer } => self.ask_free_input(text, answer)?,
-            Question::SingleChoice { text, answers } => self.ask_single_choice(text, answers)?,
-            Question::MultiChoice { text, answers } => self.ask_multi_choice(text, answers)?,
-            Question::Categorize { text, categories } => self.ask_categorize(text, categories)?,
+            Question::FreeInput { answer } => self.ask_free_input(text, answer)?,
+            Question::SingleChoice { answers } => self.ask_single_choice(text, answers)?,
+            Question::MultiChoice { answers } => self.ask_multi_choice(text, answers)?,
+            Question::Categorize { categories } => self.ask_categorize(text, categories)?,
         };
 
         match result {
@@ -115,10 +117,10 @@ impl GameState {
 
     fn ask_free_input(
         &mut self,
-        question_text: &str,
+        text: &str,
         answer: &Answer,
     ) -> Result<QuestionResult, InquireError> {
-        let input = Text::new(question_text).prompt()?;
+        let input = Text::new(text).prompt()?;
         let answer_text = answer.text.trim();
         if input.trim().eq_ignore_ascii_case(answer_text) {
             Ok(QuestionResult::Correct)

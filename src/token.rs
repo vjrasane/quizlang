@@ -1,6 +1,7 @@
 #[derive(Debug, PartialEq, Clone)]
 pub enum TokenKind {
-    FrontmatterDelimiter,
+    Frontmatter(String),
+    Metadata(String),
     Heading { level: u8, text: String },
     CorrectAnswer { label: Option<String>, text: String },
     MultiCorrectAnswer { label: Option<String>, text: String },
@@ -52,8 +53,20 @@ impl Token {
         matches!(self.kind, TokenKind::CategoryHeader { .. })
     }
 
+    pub fn is_question(&self) -> bool {
+        self.is_answer() || self.is_category()
+    }
+
     pub fn is_text(&self) -> bool {
         matches!(self.kind, TokenKind::Text(_))
+    }
+
+    pub fn is_metadata(&self) -> bool {
+        matches!(self.kind, TokenKind::Metadata(_))
+    }
+
+    pub fn is_frontmatter(&self) -> bool {
+        matches!(self.kind, TokenKind::Frontmatter(_))
     }
 
     pub fn is_incorrect(&self) -> bool {

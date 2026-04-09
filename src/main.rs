@@ -17,6 +17,7 @@ use thiserror::Error;
 enum CliError {
     Parse(#[from] parser::ParseError),
     Inquire(#[from] InquireError),
+    Lex(#[from] lexer::LexError),
     Io(#[from] std::io::Error),
 }
 
@@ -62,10 +63,11 @@ impl Cli {
         Ok(())
     }
 
-    fn parse_quiz(&self, file: &str) -> Result<Quiz, parser::ParseError> {
-        let input = fs::read_to_string(file).expect("failed to read file");
-        let tokens = lexer::lex(&input);
-        parser::parse(tokens)
+    fn parse_quiz(&self, file: &str) -> Result<Quiz, CliError> {
+        let input = fs::read_to_string(file)?;
+        let tokens = lexer::lex(&input)?;
+        let quiz = parser::parse(tokens)?;
+        Ok(quiz)
     }
 }
 

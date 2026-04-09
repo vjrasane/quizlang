@@ -2,69 +2,26 @@ use ::serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct Quiz {
-    pub frontmatter: Option<String>,
-    pub items: Vec<Item>,
+    pub frontmatter: Option<serde_yaml::Value>,
+    pub items: Vec<Section>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct Section {
     pub header: String,
-    pub items: Vec<Item>,
+    pub text: Option<String>,
+    pub metadata: Option<serde_yaml::Value>,
+    pub question: Option<Question>,
+    pub items: Vec<Section>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 #[serde(tag = "type")]
 pub enum Question {
-    FreeInput {
-        text: String,
-        answer: Answer,
-    },
-    SingleChoice {
-        text: String,
-        answers: Vec<Answer>,
-    },
-    MultiChoice {
-        text: String,
-        answers: Vec<Answer>,
-    },
-    Categorize {
-        text: String,
-        categories: Vec<Category>,
-    },
-}
-
-impl Question {
-    pub fn get_text(&self) -> String {
-        match self {
-            Question::FreeInput { text, .. }
-            | Question::SingleChoice { text, .. }
-            | Question::MultiChoice { text, .. }
-            | Question::Categorize { text, .. } => text.to_string(),
-        }
-    }
-}
-
-#[derive(Debug, Serialize)]
-#[serde(tag = "item")]
-pub enum Item {
-    Section(Section),
-    Question(Question),
-}
-
-impl Item {
-    pub fn as_question(&self) -> Option<&Question> {
-        match self {
-            Item::Question(q) => Some(q),
-            _ => None,
-        }
-    }
-
-    pub fn as_section(&self) -> Option<&Section> {
-        match self {
-            Item::Section(s) => Some(s),
-            _ => None,
-        }
-    }
+    FreeInput { answer: Answer },
+    SingleChoice { answers: Vec<Answer> },
+    MultiChoice { answers: Vec<Answer> },
+    Categorize { categories: Vec<Category> },
 }
 
 #[derive(Debug, Clone, Serialize)]

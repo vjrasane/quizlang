@@ -7,24 +7,31 @@ tags:
   - here
 ---
 
-What is 2 + 2?
+# What is 2 + 2?
 
 = 4
 
-# Geography
+## This is a nested section
 
-## Countries
+@when: on_incorrect
 
-What is the capital of France?
+It is up to the interpreter how to display this. 
+
+## Can we also display questions?
+
+@when: on_correct
+
+= Yes
+- No
+
+# What is the capital of France?
 
 (a) London
 (b) Berlin
 = (c) Paris 
 (d) Bangkok
 
-## Continents
-
-Which countries are in Europe, Asia and Africa?
+# Which countries are in Europe, Asia and Africa?
 
 > Europe
 - France

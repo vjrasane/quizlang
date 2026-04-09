@@ -8,7 +8,6 @@ struct Parser {
 }
 
 #[derive(Debug, Error)]
-#[error("parse error at line {line}: {message}")]
 pub enum ParseError {
     #[error("line {line}: unexpected token: expected {expected}, got {got:?}")]
     UnexpectedToken {
@@ -18,6 +17,8 @@ pub enum ParseError {
     },
     #[error("line {line}: unexpected end of file: expected {expected}")]
     UnexpectedEOF { line: usize, expected: String },
+    #[error("invalid metadata: {0}")]
+    InvalidMetadata(#[from] serde_yaml::Error),
 }
 
 impl Parser {
@@ -63,35 +64,25 @@ impl Parser {
         self.advance_while(|k| matches!(k.kind, TokenKind::BlankLine));
     }
 
-    fn parse_frontmatter(&mut self) -> Result<Option<String>, ParseError> {
-        self.skip_blanklines();
-        if !self
-            .peek_kind()
-            .is_some_and(|k| matches!(k, TokenKind::FrontmatterDelimiter))
-        {
-            return Ok(None);
-        }
-        self.advance();
-
+    fn parse_metadata_lines(&mut self) -> Result<Vec<String>, ParseError> {
         let mut lines = Vec::new();
         loop {
-            match self.advance() {
-                Some(Token {
-                    kind: TokenKind::FrontmatterDelimiter,
-                    ..
-                }) => return Ok(Some(lines.join("\n"))),
-                Some(Token { content, .. }) => {
-                    lines.push(content.clone());
+            self.skip_blanklines();
+            match self.peek_kind() {
+                Some(TokenKind::Metadata(text)) => {
+                    lines.push(text.clone());
+                    self.advance();
                 }
-                None => return Err(self.unexpected_error("closing ---")),
+                _ => break,
             }
         }
+        Ok(lines)
     }
 
-    fn parse_question_text(&mut self) -> Result<String, ParseError> {
+    fn parse_text_block(&mut self) -> Option<String> {
         let mut lines = Vec::new();
         while let Some(Token {
-            kind: TokenKind::Text(_) | TokenKind::BlankLine,
+            kind: TokenKind::Text(_),
             content,
             ..
         }) = self.peek()
@@ -99,11 +90,11 @@ impl Parser {
             lines.push(content.clone());
             self.advance();
         }
-        let text = lines.join("\n").trim().to_string();
-        if text.is_empty() {
-            return Err(self.unexpected_error("question text"));
-        };
-        Ok(text)
+        if lines.is_empty() {
+            None
+        } else {
+            Some(lines.join("\n"))
+        }
     }
 
     fn parse_answer(&mut self) -> Result<Answer, ParseError> {
@@ -142,7 +133,6 @@ impl Parser {
 
     fn parse_question_single_choice(
         &mut self,
-        text: String,
         mut answers: Vec<Answer>,
     ) -> Result<Question, ParseError> {
         loop {
@@ -155,12 +145,11 @@ impl Parser {
             }
         }
 
-        Ok(Question::SingleChoice { text, answers })
+        Ok(Question::SingleChoice { answers })
     }
 
     fn parse_question_multi_choice(
         &mut self,
-        text: String,
         mut answers: Vec<Answer>,
     ) -> Result<Question, ParseError> {
         loop {
@@ -172,10 +161,10 @@ impl Parser {
                 _ => break,
             }
         }
-        Ok(Question::MultiChoice { text, answers })
+        Ok(Question::MultiChoice { answers })
     }
 
-    fn parse_question_categories(&mut self, text: String) -> Result<Question, ParseError> {
+    fn parse_question_categories(&mut self) -> Result<Question, ParseError> {
         let mut categories = Vec::new();
         loop {
             self.skip_blanklines();
@@ -192,7 +181,7 @@ impl Parser {
                 _ => break,
             }
         }
-        Ok(Question::Categorize { text, categories })
+        Ok(Question::Categorize { categories })
     }
 
     fn parse_incorrect_answers(&mut self) -> Result<Vec<Answer>, ParseError> {
@@ -207,14 +196,12 @@ impl Parser {
     }
 
     fn parse_question(&mut self) -> Result<Question, ParseError> {
-        let text = self.parse_question_text()?;
-
         self.skip_blanklines();
 
         if let Some(token) = self.peek()
             && token.is_category()
         {
-            return self.parse_question_categories(text);
+            return self.parse_question_categories();
         }
 
         let mut answers = self.parse_incorrect_answers()?;
@@ -222,21 +209,69 @@ impl Parser {
         match self.peek() {
             Some(token) if token.is_single_choice() && answers.is_empty() => {
                 let answer = self.parse_answer()?;
-                Ok(Question::FreeInput { answer, text })
+                Ok(Question::FreeInput { answer })
             }
             Some(token) if token.is_single_choice() => {
                 answers.push(self.parse_answer()?);
-                self.parse_question_single_choice(text, answers)
+                self.parse_question_single_choice(answers)
             }
             Some(token) if token.is_multi_choice() => {
                 answers.push(self.parse_answer()?);
-                self.parse_question_multi_choice(text, answers)
+                self.parse_question_multi_choice(answers)
             }
             _ => Err(self.unexpected_error("answer choices")),
         }
     }
 
-    fn parse_items(&mut self, min_heading_level: u8) -> Result<Vec<Item>, ParseError> {
+    fn parse_section(
+        &mut self,
+        header: String,
+        min_heading_level: u8,
+    ) -> Result<Section, ParseError> {
+        let mut text_blocks = Vec::new();
+        let mut metadata_lines = Vec::new();
+        loop {
+            self.skip_blanklines();
+            match self.peek() {
+                Some(token) if token.is_text() => {
+                    if let Some(block) = self.parse_text_block() {
+                        text_blocks.push(block);
+                    }
+                }
+                Some(token) if token.is_metadata() => {
+                    metadata_lines.extend(self.parse_metadata_lines()?)
+                }
+                _ => break,
+            }
+        }
+
+        let question = match self.peek() {
+            Some(token) if token.is_question() => Some(self.parse_question()?),
+            _ => None,
+        };
+
+        let metadata = if !metadata_lines.is_empty() {
+            Some(self.parse_metadata(&metadata_lines.join("\n"))?)
+        } else {
+            None
+        };
+
+        let text = if !text_blocks.is_empty() {
+            Some(text_blocks.join("\n\n"))
+        } else {
+            None
+        };
+
+        Ok(Section {
+            header,
+            metadata,
+            text,
+            question,
+            items: self.parse_items(min_heading_level + 1)?,
+        })
+    }
+
+    fn parse_items(&mut self, min_heading_level: u8) -> Result<Vec<Section>, ParseError> {
         let mut items = Vec::new();
         loop {
             self.skip_blanklines();
@@ -251,23 +286,30 @@ impl Parser {
                     let header = text.to_string();
                     let next_level = *level;
                     self.advance();
-                    items.push(Item::Section(Section {
-                        header,
-                        items: self.parse_items(next_level + 1)?,
-                    }));
+                    items.push(self.parse_section(header, next_level)?);
                 }
-                Some(token) if token.is_text() => {
-                    items.push(Item::Question(self.parse_question()?))
-                }
-                Some(_) => return Err(self.unexpected_error("heading or question text")),
+                Some(_) => return Err(self.unexpected_error("heading")),
                 None => return Ok(items),
             }
         }
         Ok(items)
     }
 
+    fn parse_metadata(&self, string_data: &str) -> Result<serde_yaml::Value, ParseError> {
+        let value: serde_yaml::Value = serde_yaml::from_str(string_data)?;
+        Ok(value)
+    }
+
     fn parse_quiz(&mut self) -> Result<Quiz, ParseError> {
-        let frontmatter = self.parse_frontmatter()?;
+        self.skip_blanklines();
+        let frontmatter = match self.peek_kind() {
+            Some(TokenKind::Frontmatter(text)) => {
+                let text = text.clone();
+                self.advance();
+                Some(serde_yaml::from_str(&text)?)
+            }
+            _ => None,
+        };
         let items = self.parse_items(1)?;
         Ok(Quiz { frontmatter, items })
     }
@@ -285,7 +327,7 @@ mod tests {
     use indoc::indoc;
 
     fn parse_input(input: &str) -> Result<Quiz, ParseError> {
-        let tokens = lex(input);
+        let tokens = lex(input).unwrap();
         parse(tokens)
     }
 
@@ -299,26 +341,23 @@ mod tests {
     #[test]
     fn test_free_input_question() {
         let input = indoc! {"
-            What is 2 + 2?
+            # What is 2 + 2?
 
             = 4
         "};
         let quiz = parse_input(input).unwrap();
-        assert!(quiz.frontmatter.is_none());
-        let Item::Question(ref question) = quiz.items[0] else {
-            panic!("expected question");
-        };
-        let Question::FreeInput { text, answer } = question else {
+        let section = &quiz.items[0];
+        assert_eq!(section.header, "What is 2 + 2?");
+        let Question::FreeInput { answer } = section.question.as_ref().unwrap() else {
             panic!("expected free input question");
         };
-        assert!(text == "What is 2 + 2?");
-        assert!(answer.text == "4");
+        assert_eq!(answer.text, "4");
     }
 
     #[test]
     fn test_single_choice_question() {
         let input = indoc! {"
-            What is 2 + 2?
+            # What is 2 + 2?
 
             - 2
             = 4
@@ -326,14 +365,11 @@ mod tests {
             - 1
         "};
         let quiz = parse_input(input).unwrap();
-        assert!(quiz.frontmatter.is_none());
-        let Item::Question(ref question) = quiz.items[0] else {
-            panic!("expected question");
-        };
-        let Question::SingleChoice { text, answers } = question else {
+        let section = &quiz.items[0];
+        assert_eq!(section.header, "What is 2 + 2?");
+        let Question::SingleChoice { answers } = section.question.as_ref().unwrap() else {
             panic!("expected single choice question");
         };
-        assert!(text == "What is 2 + 2?");
         match &answers[..] {
             [a, b, c, d] => {
                 assert_eq!(a.text, "2");
@@ -352,18 +388,19 @@ mod tests {
     #[test]
     fn test_multi_choice_question() {
         let input = indoc! {"
-          Which are prime numbers?
+            # Which are prime numbers?
 
-          - 4
-          + 2
-          + 3
-          - 6
-      "};
+            - 4
+            + 2
+            + 3
+            - 6
+        "};
         let quiz = parse_input(input).unwrap();
-        let Question::MultiChoice { text, answers } = quiz.items[0].as_question().unwrap() else {
+        let section = &quiz.items[0];
+        assert_eq!(section.header, "Which are prime numbers?");
+        let Question::MultiChoice { answers } = section.question.as_ref().unwrap() else {
             panic!("expected multi choice question");
         };
-        assert_eq!(text, "Which are prime numbers?");
         assert_eq!(answers.len(), 4);
         assert!(!answers[0].correct);
         assert!(answers[1].correct);
@@ -375,21 +412,22 @@ mod tests {
     #[test]
     fn test_categorize_question() {
         let input = indoc! {"
-          Sort these by continent
+            # Sort these by continent
 
-          > Europe
-          - France
-          - Germany
+            > Europe
+            - France
+            - Germany
 
-          > Asia
-          - China
-          - Japan
-      "};
+            > Asia
+            - China
+            - Japan
+        "};
         let quiz = parse_input(input).unwrap();
-        let Question::Categorize { text, categories } = quiz.items[0].as_question().unwrap() else {
+        let section = &quiz.items[0];
+        assert_eq!(section.header, "Sort these by continent");
+        let Question::Categorize { categories } = section.question.as_ref().unwrap() else {
             panic!("expected categorize question");
         };
-        assert_eq!(text, "Sort these by continent");
         assert_eq!(categories.len(), 2);
         assert_eq!(categories[0].text, "Europe");
         assert_eq!(categories[0].answers.len(), 2);
@@ -401,58 +439,70 @@ mod tests {
     #[test]
     fn test_frontmatter() {
         let input = indoc! {"
-          ---
-          name: My Quiz
-          category: Test
-          ---
+            ---
+            name: My Quiz
+            category: Test
+            ---
 
-          What is 1 + 1?
+            # What is 1 + 1?
 
-          = 2
-      "};
+            = 2
+        "};
         let quiz = parse_input(input).unwrap();
         assert!(quiz.frontmatter.is_some());
-        assert!(quiz.frontmatter.unwrap().contains("name: My Quiz"));
+        let fm = quiz.frontmatter.unwrap();
+        assert_eq!(fm["name"], "My Quiz");
+        assert_eq!(fm["category"], "Test");
         assert_eq!(quiz.items.len(), 1);
     }
 
     #[test]
     fn test_sections() {
         let input = indoc! {"
-          # Math
+            # Math
 
-          What is 1 + 1?
+            What is 1 + 1?
 
-          = 2
+            = 2
 
-          ## Geometry
+            ## Geometry
 
-          What shape has 3 sides?
+            What shape has 3 sides?
 
-          = triangle
-      "};
+            = triangle
+        "};
         let quiz = parse_input(input).unwrap();
-        let section = quiz.items[0].as_section().unwrap();
+        let section = &quiz.items[0];
         assert_eq!(section.header, "Math");
-        assert_eq!(section.items.len(), 2);
+        let Some(text) = &section.text else {
+            panic!("expected section text")
+        };
+        assert_eq!(text, "What is 1 + 1?");
+        assert!(section.question.is_some());
+        assert_eq!(section.items.len(), 1);
 
-        let subsection = section.items[1].as_section().unwrap();
+        let subsection = &section.items[0];
         assert_eq!(subsection.header, "Geometry");
-        assert_eq!(subsection.items.len(), 1);
+        let Some(text) = &subsection.text else {
+            panic!("expected subsection text")
+        };
+        assert_eq!(text, "What shape has 3 sides?");
+        assert!(subsection.question.is_some());
     }
 
     #[test]
     fn test_answer_with_notes() {
         let input = indoc! {"
-          Which country is largest?
+            # Which country is largest?
 
-          - India
-          = Russia
-          Note: by land area
-          - China
-      "};
+            - India
+            = Russia
+            Note: by land area
+            - China
+        "};
         let quiz = parse_input(input).unwrap();
-        let Question::SingleChoice { answers, .. } = quiz.items[0].as_question().unwrap() else {
+        let section = &quiz.items[0];
+        let Question::SingleChoice { answers } = section.question.as_ref().unwrap() else {
             panic!("expected single choice");
         };
         assert_eq!(answers[1].text, "Russia");
@@ -462,15 +512,16 @@ mod tests {
     #[test]
     fn test_labeled_options() {
         let input = indoc! {"
-          What is the capital of France?
+            # What is the capital of France?
 
-          (a) London
-          (b) Berlin
-          = (c) Paris
-          (d) Bangkok
-      "};
+            (a) London
+            (b) Berlin
+            = (c) Paris
+            (d) Bangkok
+        "};
         let quiz = parse_input(input).unwrap();
-        let Question::SingleChoice { answers, .. } = quiz.items[0].as_question().unwrap() else {
+        let section = &quiz.items[0];
+        let Question::SingleChoice { answers } = section.question.as_ref().unwrap() else {
             panic!("expected single choice");
         };
         assert_eq!(answers.len(), 4);
@@ -478,5 +529,97 @@ mod tests {
         assert_eq!(answers[2].text, "Paris");
         assert_eq!(answers[2].label.as_deref(), Some("c"));
         assert!(answers[2].correct);
+    }
+
+    #[test]
+    fn test_section_metadata() {
+        let input = indoc! {"
+            # What is 2 + 2?
+
+            @when: on_correct
+            @difficulty: easy
+
+            = 4
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let metadata = section.metadata.as_ref().unwrap();
+        assert_eq!(metadata["when"], "on_correct");
+        assert_eq!(metadata["difficulty"], "easy");
+        assert!(section.question.is_some());
+    }
+
+    #[test]
+    fn test_section_metadata_with_text() {
+        let input = indoc! {"
+            # A question
+
+            @shuffle: true
+
+            Some explanatory text
+
+            = answer
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let metadata = section.metadata.as_ref().unwrap();
+        assert_eq!(metadata["shuffle"], true);
+        let text = section.text.as_ref().unwrap();
+        assert_eq!(text, "Some explanatory text");
+    }
+
+    #[test]
+    fn test_section_no_metadata() {
+        let input = indoc! {"
+            # Simple question
+
+            = 42
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        assert!(section.metadata.is_none());
+    }
+
+    #[test]
+    fn test_metadata_between_text() {
+        let input = indoc! {"
+            # A question
+
+            First paragraph
+
+            @difficulty: hard
+            @category: math
+
+            Second paragraph
+
+            = answer
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let metadata = section.metadata.as_ref().unwrap();
+        assert_eq!(metadata["difficulty"], "hard");
+        assert_eq!(metadata["category"], "math");
+        let text = section.text.as_ref().unwrap();
+        assert!(text.contains("First paragraph"));
+        assert!(text.contains("Second paragraph"));
+    }
+
+    #[test]
+    fn test_frontmatter_and_section_metadata() {
+        let input = indoc! {"
+            ---
+            name: My Quiz
+            ---
+
+            # Question 1
+
+            @when: always
+
+            = yes
+        "};
+        let quiz = parse_input(input).unwrap();
+        assert_eq!(quiz.frontmatter.as_ref().unwrap()["name"], "My Quiz");
+        let section = &quiz.items[0];
+        assert_eq!(section.metadata.as_ref().unwrap()["when"], "always");
     }
 }
