@@ -10,4 +10,11 @@ types: schema
 generate: schema
   npx tsx pipeline/index.ts
 
-build: types generate
+parse:
+  mkdir -p data
+  for f in quizzes/*.quiz; do \
+    echo "Parsing $f"; \
+    quiz parse "$f" > "data/$(basename "$f" .quiz).json"; \
+  done
+
+build: types generate parse

@@ -1,0 +1,815 @@
+{
+  "frontmatter": {
+    "category": "Avaruus",
+    "name": "Aurinkokunta-tietovisa",
+    "tags": [
+      "aurinkokunta",
+      "planeetat",
+      "avaruus",
+      "tähtitiede"
+    ]
+  },
+  "items": [
+    {
+      "header": "Mikä on aurinkokunnan suurin planeetta?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Jupiter",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Saturnus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Neptunus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Uranus",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Kuinka monta planeettaa aurinkokunnassa on?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "8",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "9",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "7",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "10",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä planeetta on lähimpänä Aurinkoa?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Merkurius",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Venus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Maapallo",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Mars",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Millä planeetalla on aurinkokunnan korkein vuori, Olympus Mons?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Mars",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Venus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Merkurius",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Maapallo",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä planeetta pyörii akselinsa ympäri vastakkaiseen suuntaan kuin useimmat muut planeetat?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Venus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Uranus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Neptunus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Mars",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mitkä seuraavista ovat kiviplaneettoja?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "MultiChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Merkurius",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Venus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Maapallo",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Mars",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Jupiter",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Saturnus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Neptunus",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Millä planeetalla vuorokausi on pidempi kuin sen vuosi?",
+      "text": "Venus pyörii akselinsa ympäri hyvin hitaasti.",
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Venus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Merkurius",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Mars",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Uranus",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä on Saturnuksen suurin kuu?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Titan",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Europa",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Ganymedes",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Kallisto",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä on aurinkokunnan kuumin planeetta?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Venus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Merkurius",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Mars",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Jupiter",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Millä Jupiterin kuulla uskotaan olevan nestemäinen valtameri jääkerroksen alla?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Europa",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Io",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Ganymedes",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Kallisto",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä on Auringon pääasiallinen polttoaine?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Vety",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Helium",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Happi",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Hiili",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Luokittele taivaankappaleet oikein",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "Categorize",
+        "categories": [
+          {
+            "text": "Planeetat",
+            "answers": [
+              {
+                "label": null,
+                "text": "Jupiter",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Saturnus",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Maapallo",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Mars",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          },
+          {
+            "text": "Kääpiöplaneetat",
+            "answers": [
+              {
+                "label": null,
+                "text": "Pluto",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Eris",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Ceres",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          },
+          {
+            "text": "Kuut",
+            "answers": [
+              {
+                "label": null,
+                "text": "Titan",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Europa",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Ganymedes",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Minä vuonna Pluto luokiteltiin uudelleen kääpiöplaneetaksi?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "FreeInput",
+        "answer": {
+          "label": null,
+          "text": "2006",
+          "notes": null,
+          "correct": true
+        }
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä planeetta tunnetaan rengasjärjestelmästään?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Saturnus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Jupiter",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Uranus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Neptunus",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mitkä planeetat ovat Maapalloa suurempia?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "MultiChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Jupiter",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Saturnus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Uranus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Neptunus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Merkurius",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Venus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Mars",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä on aurinkokunnan suurin tunnettu tulivuori?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Olympus Mons",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Mauna Kea",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Kilimanjaro",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Mount Everest",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Kuinka kauan kestää valon matka Auringosta Maapalloon?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Noin 8 minuuttia",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Noin 1 minuutti",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Noin 30 minuuttia",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Noin 1 tunti",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä ilmiö aiheuttaa vuorovesi Maapallolla?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Kuun ja Auringon vetovoima",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Maapallon pyöriminen",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Tuuli",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Merivirtaukset",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Luokittele planeetat etäisyyden mukaan Auringosta",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "Categorize",
+        "categories": [
+          {
+            "text": "Lähellä Aurinkoa",
+            "answers": [
+              {
+                "label": null,
+                "text": "Merkurius",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Venus",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Maapallo",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Mars",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          },
+          {
+            "text": "Kaukana Auringosta",
+            "answers": [
+              {
+                "label": null,
+                "text": "Jupiter",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Saturnus",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Uranus",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Neptunus",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä avaruusluotain on matkustanut kauimmaksi aurinkokunnassa?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Voyager 1",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Voyager 2",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Pioneer 10",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "New Horizons",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    }
+  ]
+}

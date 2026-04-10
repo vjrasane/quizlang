@@ -1,0 +1,19 @@
+#!/usr/bin/env -S npx tsx
+import { findStaleFiles } from "../pipeline/hasher.js";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+const WEB_DIR = dirname(SCRIPT_DIR);
+const SOURCES_DIR = join(WEB_DIR, "sources");
+const OUTPUT_DIR = join(WEB_DIR, "quizzes");
+
+const stale = findStaleFiles(SOURCES_DIR, OUTPUT_DIR);
+
+if (stale.length === 0) {
+  console.log("All quizzes are up to date.");
+} else {
+  for (const { sourcePath, outputName } of stale) {
+    console.log(`${sourcePath}\t${outputName}`);
+  }
+}

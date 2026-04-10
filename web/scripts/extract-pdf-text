@@ -1,0 +1,12 @@
+#!/usr/bin/env -S npx tsx
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+
+const path = process.argv[2];
+if (!path) {
+  console.error("Usage: extract-pdf-text <pdf-path>");
+  process.exit(1);
+}
+
+const loader = new PDFLoader(path);
+const docs = await loader.load();
+console.log(docs.map((d) => d.pageContent).join("\n"));

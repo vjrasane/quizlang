@@ -1,0 +1,815 @@
+{
+  "frontmatter": {
+    "category": "Historia",
+    "name": "Ranskan vallankumous",
+    "tags": [
+      "historia",
+      "vallankumous",
+      "ranska",
+      "eurooppa"
+    ]
+  },
+  "items": [
+    {
+      "header": "Minä vuonna Ranskan vallankumous alkoi?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "1789",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "1776",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "1799",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "1804",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä tapahtuma käynnisti Ranskan vallankumouksen 14. heinäkuuta 1789?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Bastiljin valtaus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Versailles'n marssi",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Kuninkaan vangitseminen",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Kansalliskokouksen perustaminen",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Kuka oli Ranskan kuningas vallankumouksen alkaessa?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Ludvig XVI",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Ludvig XIV",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Ludvig XV",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Kaarle X",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä julistus hyväksyttiin elokuussa 1789?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Ihmis- ja kansalaisoikeuksien julistus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Itsenäisyysjulistus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Ranskan perustuslaki",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Valistuksen julistus",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mihin säätyyn kuuluivat aateliset vanhan järjestelmän aikana?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Toiseen säätyyn",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Ensimmäiseen säätyyn",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Kolmanteen säätyyn",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Neljänteen säätyyn",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Luokittele henkilöt roolien mukaan",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "Categorize",
+        "categories": [
+          {
+            "text": "Vallankumousjohtajat",
+            "answers": [
+              {
+                "label": null,
+                "text": "Maximilien Robespierre",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Georges Danton",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Jean-Paul Marat",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          },
+          {
+            "text": "Kuninkaallinen perhe",
+            "answers": [
+              {
+                "label": null,
+                "text": "Ludvig XVI",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Marie Antoinette",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          },
+          {
+            "text": "Sotilasjohtajat",
+            "answers": [
+              {
+                "label": null,
+                "text": "Napoleon Bonaparte",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Markiisi de Lafayette",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mitkä olivat Ranskan vallankumouksen tunnuslauseen osia?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "MultiChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Vapaus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Veljeys",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Tasa-arvo",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Oikeus",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Voima",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Kunnia",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä oli terrorin aika?",
+      "text": "Ranskassa vallitsi erityisen väkivaltainen kausi vuosina 1793-1794.",
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Jakobiinien johtama diktatuurikausi, jolloin tuhansia teloitettiin",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Sodan aika Englantia vastaan",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Nälänhädän aiheuttama kansannousu",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Napoleonin sotaretki Egyptiin",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Millä välineellä teloitukset pääasiassa toimitettiin vallankumouksen aikana?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Giljotiini",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Hirttäminen",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Ampuminen",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Mestaus miekalla",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Kuka johti terrorin aikaa?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Maximilien Robespierre",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Napoleon Bonaparte",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Georges Danton",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Markiisi de Lafayette",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Minä vuonna Ludvig XVI teloitettiin?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "1793",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "1789",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "1791",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "1795",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä hallintomuoto korvasi monarkian vuonna 1792?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Tasavalta",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Diktatuuri",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Perustuslaillinen monarkia",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Keisarikunta",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä oli kolmas sääty?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Rahvas eli tavallinen kansa",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Aatelisto",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Papisto",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Sotilaat",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Kuka nousi valtaan sotilasvallankaappauksella vuonna 1799 ja päätti vallankumouksen?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Napoleon Bonaparte",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Maximilien Robespierre",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Markiisi de Lafayette",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Georges Danton",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Luokittele tapahtumat oikeille vuosille",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "Categorize",
+        "categories": [
+          {
+            "text": "1789",
+            "answers": [
+              {
+                "label": null,
+                "text": "Bastiljin valtaus",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Ihmis- ja kansalaisoikeuksien julistus",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Säätyerioikeuksien lakkauttaminen",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          },
+          {
+            "text": "1792",
+            "answers": [
+              {
+                "label": null,
+                "text": "Monarkian lakkauttaminen",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Tasavallan julistaminen",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          },
+          {
+            "text": "1793-1794",
+            "answers": [
+              {
+                "label": null,
+                "text": "Ludvig XVI:n teloitus",
+                "notes": null,
+                "correct": false
+              },
+              {
+                "label": null,
+                "text": "Terrorin aika",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          },
+          {
+            "text": "1799",
+            "answers": [
+              {
+                "label": null,
+                "text": "Napoleonin vallankaappaus",
+                "notes": null,
+                "correct": false
+              }
+            ]
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mitkä olivat Ranskan vallankumouksen syitä?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "MultiChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Valtion velkaongelmat",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Ruokapula ja nälänhätä",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Säätyjen välinen eriarvoisuus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Valistusfilosofian vaikutus",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Vieraan valtion hyökkäys",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Rutto",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mitä tapahtui Marie Antoinettelle?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Hänet teloitettiin giljotiinilla vuonna 1793",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Hän pakeni Itävaltaan",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Hän vangittiin loppuelämäkseen",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Hän luopui kruunusta vapaaehtoisesti",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä kokous kutsuttiin koolle toukokuussa 1789 Ranskan talouskriisin ratkaisemiseksi?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Valtiopäivät (Etats generaux)",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Kansalliskokous",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Senaatti",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Aatelisneuvosto",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Millä nimellä tunnettiin vallankumouksen jälkeinen hallitus vuosina 1795-1799?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Direktorio",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Konventti",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Konsultti",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Senaatti",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    },
+    {
+      "header": "Mikä vaikutus Ranskan vallankumouksella oli Eurooppaan?",
+      "text": null,
+      "metadata": null,
+      "question": {
+        "type": "SingleChoice",
+        "answers": [
+          {
+            "label": null,
+            "text": "Se levitti demokratian ja kansalaisoikeuksien aatteita",
+            "notes": null,
+            "correct": true
+          },
+          {
+            "label": null,
+            "text": "Se johti Euroopan yhdistymiseen",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Se vahvisti monarkioita kaikkialla",
+            "notes": null,
+            "correct": false
+          },
+          {
+            "label": null,
+            "text": "Sillä ei ollut merkittävää vaikutusta muihin maihin",
+            "notes": null,
+            "correct": false
+          }
+        ]
+      },
+      "items": []
+    }
+  ]
+}

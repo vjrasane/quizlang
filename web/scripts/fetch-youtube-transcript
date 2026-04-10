@@ -1,0 +1,12 @@
+#!/usr/bin/env -S npx tsx
+import { YoutubeLoader } from "@langchain/community/document_loaders/web/youtube";
+
+const url = process.argv[2];
+if (!url) {
+  console.error("Usage: fetch-youtube-transcript <youtube-url>");
+  process.exit(1);
+}
+
+const loader = YoutubeLoader.createFromUrl(url, { addVideoInfo: true });
+const docs = await loader.load();
+console.log(docs.map((d) => d.pageContent).join("\n"));
