@@ -18,7 +18,9 @@ pub enum ParseError {
     #[error("line {line}: unexpected end of file: expected {expected}")]
     UnexpectedEOF { line: usize, expected: String },
     #[error("invalid metadata: {0}")]
-    InvalidMetadata(#[from] serde_yaml::Error),
+    InvalidYamlMetadata(#[from] serde_yaml::Error),
+    #[error("invalid metadata: {0}")]
+    InvalidJsonMetadata(#[from] serde_json::Error),
 }
 
 impl Parser {
@@ -295,9 +297,10 @@ impl Parser {
         Ok(items)
     }
 
-    fn parse_metadata(&self, string_data: &str) -> Result<serde_yaml::Value, ParseError> {
-        let value: serde_yaml::Value = serde_yaml::from_str(string_data)?;
-        Ok(value)
+    fn parse_metadata(&self, string_data: &str) -> Result<serde_json::Value, ParseError> {
+        let yaml: serde_yaml::Value = serde_yaml::from_str(string_data)?;
+        let json: serde_json::Value = serde_json::to_value(&yaml)?;
+        Ok(json)
     }
 
     fn parse_quiz(&mut self) -> Result<Quiz, ParseError> {

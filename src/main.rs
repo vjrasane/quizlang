@@ -18,6 +18,7 @@ enum CliError {
     Parse(#[from] parser::ParseError),
     Inquire(#[from] InquireError),
     Lex(#[from] lexer::LexError),
+    Serde(#[from] serde_json::Error),
     Io(#[from] std::io::Error),
 }
 
@@ -40,6 +41,8 @@ enum Command {
         /// Path to the quiz file
         file: String,
     },
+    /// Output JSON schema
+    Schema,
 }
 
 impl Cli {
@@ -47,7 +50,14 @@ impl Cli {
         match &self.command {
             Command::Parse { file } => self.cmd_parse(file)?,
             Command::Play { file } => self.cmd_play(file)?,
+            Command::Schema => self.cmd_schema()?,
         }
+        Ok(())
+    }
+
+    fn cmd_schema(&self) -> Result<(), CliError> {
+        let schema = schemars::schema_for!(Quiz);
+        println!("{}", serde_json::to_string_pretty(&schema)?);
         Ok(())
     }
 

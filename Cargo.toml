@@ -12,3 +12,8 @@ serde_yaml = "0.9"
 inquire = "0.7"
 rand = "0.9"
 thiserror = "2"
+schemars = "0.8"
+
+[[bin]]
+name = "quiz"
+path = "src/main.rs"
