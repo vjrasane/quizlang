@@ -1,17 +1,55 @@
 ---
+import Base from "@/src/layouts/Base.astro";
+import fs from "node:fs";
+import path from "node:path";
+import type { Quiz } from "@/src/types/quiz";
 
+const dataDir = path.resolve("data");
+const files = fs.readdirSync(dataDir).filter((f) => f.endsWith(".json"));
+
+const quizzes = files.map((file) => {
+  const id = file.replace(/\.json$/, "");
+  const raw = fs.readFileSync(path.join(dataDir, file), "utf-8");
+  const quiz: Quiz = JSON.parse(raw);
+  const name = (quiz.frontmatter as any)?.name ?? id;
+  const category = (quiz.frontmatter as any)?.category;
+  const tags: string[] = (quiz.frontmatter as any)?.tags ?? [];
+  const questionCount = quiz.items.filter((s) => s.question).length;
+  return { id, name, category, tags, questionCount };
+});
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="Quizzes">
+  <div class="max-w-3xl mx-auto px-6 py-8">
+    <h1 class="text-2xl font-bold mb-6">Quizzes</h1>
+    <div class="grid gap-4">
+      {quizzes.map((q) => (
+        <a
+          href={`/play/${q.id}`}
+          class="block bg-bg-1 border border-border rounded-lg p-5 hover:border-accent transition-colors"
+        >
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h2 class="text-lg font-semibold text-text-primary">{q.name}</h2>
+              {q.category && (
+                <span class="text-sm text-text-muted">{q.category}</span>
+              )}
+            </div>
+            <span class="text-sm text-text-muted whitespace-nowrap">
+              {q.questionCount} questions
+            </span>
+          </div>
+          {q.tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mt-3">
+              {q.tags.map((tag) => (
+                <span class="text-xs bg-bg-2 text-text-secondary px-2 py-0.5 rounded">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </a>
+      ))}
+    </div>
+  </div>
+</Base>

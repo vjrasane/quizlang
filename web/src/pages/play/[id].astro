@@ -1,0 +1,25 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "@/src/layouts/Base.astro";
+import { QuizPlayer } from "@/src/components/QuizPlayer";
+import fs from "node:fs";
+import path from "node:path";
+import type { Quiz } from "@/src/types/quiz";
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const dataDir = path.resolve("data");
+  const files = fs.readdirSync(dataDir).filter((f: string) => f.endsWith(".json"));
+  return files.map((file: string) => ({
+    params: { id: file.replace(/\.json$/, "") },
+  }));
+};
+
+const { id } = Astro.params;
+const raw = fs.readFileSync(path.resolve("data", `${id}.json`), "utf-8");
+const quiz: Quiz = JSON.parse(raw);
+const name = (quiz.frontmatter as any)?.name ?? id;
+---
+
+<Base title={name}>
+  <QuizPlayer quizId={id!} client:only="react" />
+</Base>
