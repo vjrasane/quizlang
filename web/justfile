@@ -1,0 +1,13 @@
+mk-types-dir:
+  mkdir -p src/types
+
+schema: mk-types-dir
+  quiz schema > src/types/schema.json
+
+types: schema
+  npx json-schema-to-typescript src/types/schema.json --output src/types/quiz.d.ts
+
+generate: schema
+  npx tsx pipeline/index.ts
+
+build: types generate

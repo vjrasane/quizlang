@@ -209,13 +209,15 @@ impl Parser {
         let mut answers = self.parse_incorrect_answers()?;
 
         match self.peek() {
-            Some(token) if token.is_single_choice() && answers.is_empty() => {
-                let answer = self.parse_answer()?;
-                Ok(Question::FreeInput { answer })
-            }
             Some(token) if token.is_single_choice() => {
                 answers.push(self.parse_answer()?);
-                self.parse_question_single_choice(answers)
+                let result = self.parse_question_single_choice(answers)?;
+                match result {
+                    Question::SingleChoice { answers } if answers.len() == 1 && answers[0].correct => {
+                        Ok(Question::FreeInput { answer: answers.into_iter().next().unwrap() })
+                    }
+                    _ => Ok(result),
+                }
             }
             Some(token) if token.is_multi_choice() => {
                 answers.push(self.parse_answer()?);
@@ -624,5 +626,27 @@ mod tests {
         assert_eq!(quiz.frontmatter.as_ref().unwrap()["name"], "My Quiz");
         let section = &quiz.items[0];
         assert_eq!(section.metadata.as_ref().unwrap()["when"], "always");
+    }
+
+    #[test]
+    fn test_correct_answer_before_incorrect() {
+        let input = indoc! {"
+            # What is 2 + 2?
+
+            = 4
+            - 3
+            - 5
+            - 6
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let Question::SingleChoice { answers } = section.question.as_ref().unwrap() else {
+            panic!("expected single choice question");
+        };
+        assert_eq!(answers.len(), 4);
+        assert_eq!(answers[0].text, "4");
+        assert!(answers[0].correct);
+        assert_eq!(answers[1].text, "3");
+        assert!(!answers[1].correct);
     }
 }

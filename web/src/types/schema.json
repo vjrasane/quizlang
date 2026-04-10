@@ -1,0 +1,184 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Quiz",
+  "type": "object",
+  "required": [
+    "items"
+  ],
+  "properties": {
+    "frontmatter": true,
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Section"
+      }
+    }
+  },
+  "definitions": {
+    "Answer": {
+      "type": "object",
+      "required": [
+        "correct",
+        "text"
+      ],
+      "properties": {
+        "correct": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "Category": {
+      "type": "object",
+      "required": [
+        "answers",
+        "text"
+      ],
+      "properties": {
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Answer"
+          }
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "Question": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "answer",
+            "type"
+          ],
+          "properties": {
+            "answer": {
+              "$ref": "#/definitions/Answer"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FreeInput"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "answers",
+            "type"
+          ],
+          "properties": {
+            "answers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Answer"
+              }
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "SingleChoice"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "answers",
+            "type"
+          ],
+          "properties": {
+            "answers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Answer"
+              }
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "MultiChoice"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "categories",
+            "type"
+          ],
+          "properties": {
+            "categories": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Category"
+              }
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Categorize"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Section": {
+      "type": "object",
+      "required": [
+        "header",
+        "items"
+      ],
+      "properties": {
+        "header": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Section"
+          }
+        },
+        "metadata": true,
+        "question": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Question"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}
