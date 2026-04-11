@@ -14,6 +14,7 @@ import {
 } from "@dnd-kit/core";
 import type { Category } from "@/src/types/quiz";
 import { useLocale } from "@/src/i18n";
+import { ActionButton } from "./ActionButton";
 
 interface Props {
   categories: Category[];
@@ -263,13 +264,9 @@ export function Categorize({ categories, onAnswer }: Props) {
         </div>
 
         {!submitted && (
-          <button
-            onClick={handleSubmit}
-            disabled={!allAssigned}
-            className="w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-          >
+          <ActionButton onClick={handleSubmit} disabled={!allAssigned}>
             {t("submit")}
-          </button>
+          </ActionButton>
         )}
       </div>
 

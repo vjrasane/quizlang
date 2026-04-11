@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import type { Quiz, Section } from "@/src/types/quiz";
 import { QuestionView } from "./QuestionView";
+import { ActionButton } from "./ActionButton";
 import { useLocale, type Locale } from "@/src/i18n";
 import { routes } from "@/src/routes";
 
@@ -118,7 +119,7 @@ export function QuizPlayer({ quizId, initialQuiz }: Props) {
             {t("percentCorrect")}
           </p>
           <div className="flex gap-3 justify-center">
-            <button
+            <ActionButton
               onClick={() => {
                 setCurrent(0);
                 setScore(0);
@@ -126,10 +127,9 @@ export function QuizPlayer({ quizId, initialQuiz }: Props) {
                 setFinished(false);
                 setAttempt((a) => a + 1);
               }}
-              className="px-5 sm:px-6 py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover transition-colors"
             >
               {t("tryAgain")}
-            </button>
+            </ActionButton>
             <a
               href={routes.index}
               className="px-5 sm:px-6 py-2 bg-bg-2 text-text-primary font-semibold rounded-lg border border-border hover:border-accent transition-colors"
@@ -181,12 +181,9 @@ export function QuizPlayer({ quizId, initialQuiz }: Props) {
           onAnswer={handleAnswer}
         />
         {answered && (
-          <button
-            onClick={handleNext}
-            className="mt-4 sm:mt-6 w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover transition-colors"
-          >
+          <ActionButton onClick={handleNext} className="mt-4 sm:mt-6">
             {current + 1 >= total ? t("seeResults") : t("next")}
-          </button>
+          </ActionButton>
         )}
       </div>
     </div>
