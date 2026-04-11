@@ -29,7 +29,7 @@ export function QuizPlayer({ quizId }: Props) {
   const { t } = useLocale(frontmatterLocale);
 
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}play/${quizId}.json`)
+    fetch(`${import.meta.env.BASE_URL}/play/${quizId}.json`)
       .then((r) => r.json())
       .then(setQuiz);
   }, [quizId]);
