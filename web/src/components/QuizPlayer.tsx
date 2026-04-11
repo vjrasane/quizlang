@@ -6,6 +6,7 @@ import { routes } from "@/src/routes";
 
 interface Props {
   quizId: string;
+  initialQuiz?: Quiz;
 }
 
 function collectQuestions(sections: Section[]): Section[] {
@@ -17,8 +18,8 @@ function collectQuestions(sections: Section[]): Section[] {
   return result;
 }
 
-export function QuizPlayer({ quizId }: Props) {
-  const [quiz, setQuiz] = useState<Quiz | null>(null);
+export function QuizPlayer({ quizId, initialQuiz }: Props) {
+  const [quiz, setQuiz] = useState<Quiz | null>(initialQuiz ?? null);
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(false);
@@ -30,10 +31,11 @@ export function QuizPlayer({ quizId }: Props) {
   const { t } = useLocale(frontmatterLocale);
 
   useEffect(() => {
+    if (initialQuiz) return;
     fetch(`${routes.play(quizId)}.json`)
       .then((r) => r.json())
       .then(setQuiz);
-  }, [quizId]);
+  }, [quizId, initialQuiz]);
 
   const questions = useMemo(
     () => (quiz ? collectQuestions(quiz.items) : []),
