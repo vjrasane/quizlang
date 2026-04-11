@@ -18,12 +18,62 @@ function collectQuestions(sections: Section[]): Section[] {
   return result;
 }
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function shuffleAnswers(section: Section): Section {
+  const q = section.question;
+  if (!q) return section;
+  switch (q.type) {
+    case "SingleChoice":
+    case "MultiChoice":
+      return { ...section, question: { ...q, answers: shuffle(q.answers) } };
+    case "Categorize":
+      return {
+        ...section,
+        question: {
+          ...q,
+          categories: q.categories.map((c) => ({
+            ...c,
+            answers: shuffle(c.answers),
+          })),
+        },
+      };
+    default:
+      return section;
+  }
+}
+
+function prepareQuestions(
+  quiz: Quiz,
+): Section[] {
+  const fm = quiz.frontmatter as Record<string, unknown> | undefined;
+  const shouldShuffleQuestions = (fm?.shuffle_questions as boolean) ?? false;
+  const globalShuffleAnswers = (fm?.shuffle_answers as boolean) ?? true;
+
+  let questions = collectQuestions(quiz.items);
+  if (shouldShuffleQuestions) questions = shuffle(questions);
+
+  return questions.map((section) => {
+    const meta = section.metadata as Record<string, unknown> | undefined;
+    const shouldShuffle = (meta?.shuffle_answers as boolean) ?? globalShuffleAnswers;
+    return shouldShuffle ? shuffleAnswers(section) : section;
+  });
+}
+
 export function QuizPlayer({ quizId, initialQuiz }: Props) {
   const [quiz, setQuiz] = useState<Quiz | null>(initialQuiz ?? null);
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   const frontmatterLocale = (quiz?.frontmatter as any)?.language as
     | Locale
@@ -38,8 +88,8 @@ export function QuizPlayer({ quizId, initialQuiz }: Props) {
   }, [quizId, initialQuiz]);
 
   const questions = useMemo(
-    () => (quiz ? collectQuestions(quiz.items) : []),
-    [quiz],
+    () => (quiz ? prepareQuestions(quiz) : []),
+    [quiz, attempt],
   );
 
   if (!quiz) {
@@ -74,6 +124,7 @@ export function QuizPlayer({ quizId, initialQuiz }: Props) {
                 setScore(0);
                 setAnswered(false);
                 setFinished(false);
+                setAttempt((a) => a + 1);
               }}
               className="px-5 sm:px-6 py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover transition-colors"
             >

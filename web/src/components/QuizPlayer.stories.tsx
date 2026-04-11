@@ -88,3 +88,22 @@ export const Default: Story = {
     initialQuiz: sampleQuiz,
   },
 };
+
+export const ShuffledAnswers: Story = {
+  args: {
+    quizId: "sample",
+    initialQuiz: sampleQuiz,
+  },
+};
+
+const noShuffleQuiz: Quiz = {
+  ...sampleQuiz,
+  frontmatter: { ...sampleQuiz.frontmatter as object, shuffle_answers: false },
+};
+
+export const NoShuffle: Story = {
+  args: {
+    quizId: "sample",
+    initialQuiz: noShuffleQuiz,
+  },
+};
