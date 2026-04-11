@@ -21,5 +21,7 @@ const name = (quiz.frontmatter as any)?.name ?? id;
 ---
 
 <Base title={name}>
-  <QuizPlayer quizId={id!} client:only="react" />
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <QuizPlayer quizId={id!} client:only="react" />
+  </div>
 </Base>

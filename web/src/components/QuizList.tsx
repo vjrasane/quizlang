@@ -1,4 +1,5 @@
 import { useLocale } from "@/src/i18n";
+import { routes } from "@/src/routes";
 
 interface QuizEntry {
   id: string;
@@ -16,7 +17,7 @@ export function QuizList({ quizzes }: Props) {
   const { t } = useLocale();
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <div>
       <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
         {t("quizzes")}
       </h1>
@@ -24,7 +25,7 @@ export function QuizList({ quizzes }: Props) {
         {quizzes.map((q) => (
           <a
             key={q.id}
-            href={`${import.meta.env.BASE_URL}/play/${q.id}`}
+            href={routes.play(q.id)}
             className="block bg-bg-1 border border-border rounded-lg p-4 sm:p-5 hover:border-accent transition-colors"
           >
             <div className="flex items-start justify-between gap-3 sm:gap-4">

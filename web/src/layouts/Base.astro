@@ -1,6 +1,7 @@
 ---
 import "@/src/styles/global.css";
 import { SettingsMenu } from "@/src/components/SettingsMenu";
+import { routes } from "@/src/routes";
 
 interface Props {
   title?: string;
@@ -19,15 +20,13 @@ const pageTitle = [title, "Quizlang"].filter(Boolean).join(" | ");
     <title>{pageTitle}</title>
   </head>
   <body class="min-h-screen flex flex-col">
-    <header class="bg-bg-1 border-b border-border px-4 sm:px-6 py-3 sm:py-4 flex items-center">
-      <a href={import.meta.env.BASE_URL} class="text-base sm:text-lg font-bold text-text-primary hover:text-accent">
+    <header class="bg-bg-1 border-b border-border px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href={routes.index} class="text-base sm:text-lg font-bold text-text-primary hover:text-accent">
         Quizlang
       </a>
-      <div class="ml-auto">
-        <SettingsMenu client:only="react" />
-      </div>
+      <SettingsMenu client:only="react" />
     </header>
-    <main class="flex-1">
+    <main class="flex-1 w-full">
       <slot />
     </main>
   </body>

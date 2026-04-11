@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import type { Quiz, Section } from "@/src/types/quiz";
 import { QuestionView } from "./QuestionView";
 import { useLocale, type Locale } from "@/src/i18n";
+import { routes } from "@/src/routes";
 
 interface Props {
   quizId: string;
@@ -29,7 +30,7 @@ export function QuizPlayer({ quizId }: Props) {
   const { t } = useLocale(frontmatterLocale);
 
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}/play/${quizId}.json`)
+    fetch(`${routes.play(quizId)}.json`)
       .then((r) => r.json())
       .then(setQuiz);
   }, [quizId]);
@@ -41,7 +42,7 @@ export function QuizPlayer({ quizId }: Props) {
 
   if (!quiz) {
     return (
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 text-text-muted">
+      <div className="text-text-muted">
         {t("loading")}
       </div>
     );
@@ -52,7 +53,7 @@ export function QuizPlayer({ quizId }: Props) {
 
   if (finished) {
     return (
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div>
         <div className="bg-bg-1 border border-border rounded-lg p-6 sm:p-8 text-center">
           <h2 className="text-xl sm:text-2xl font-bold text-text-primary mb-2">
             {name}
@@ -77,7 +78,7 @@ export function QuizPlayer({ quizId }: Props) {
               {t("tryAgain")}
             </button>
             <a
-              href={import.meta.env.BASE_URL}
+              href={routes.index}
               className="px-5 sm:px-6 py-2 bg-bg-2 text-text-primary font-semibold rounded-lg border border-border hover:border-accent transition-colors"
             >
               {t("allQuizzes")}
@@ -105,7 +106,7 @@ export function QuizPlayer({ quizId }: Props) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <div>
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-base sm:text-lg font-semibold text-text-secondary truncate mr-2">
           {name}

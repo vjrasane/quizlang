@@ -21,5 +21,7 @@ const quizzes = files.map((file) => {
 ---
 
 <Base title="Quizzes">
-  <QuizList quizzes={quizzes} client:only="react" />
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <QuizList quizzes={quizzes} client:only="react" />
+  </div>
 </Base>
