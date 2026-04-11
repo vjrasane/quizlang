@@ -1,6 +1,6 @@
 ---
 import "@/src/styles/global.css";
-import { LanguageToggle } from "@/src/components/LanguageToggle";
+import { SettingsMenu } from "@/src/components/SettingsMenu";
 
 interface Props {
   title?: string;
@@ -24,7 +24,7 @@ const pageTitle = [title, "Quizlang"].filter(Boolean).join(" | ");
         <a href={import.meta.env.BASE_URL} class="text-base sm:text-lg font-bold text-text-primary hover:text-accent">
           Quizlang
         </a>
-        <LanguageToggle client:only="react" />
+        <SettingsMenu client:only="react" />
       </div>
     </header>
     <main class="flex-1">
