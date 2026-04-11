@@ -50,9 +50,9 @@ export function MultiChoice({ answers, onAnswer }: Props) {
             key={i}
             onClick={() => toggleSelection(i)}
             disabled={submitted}
-            className={`text-left px-4 py-3 rounded-lg border transition-colors ${style} ${!submitted ? "cursor-pointer" : "cursor-default"}`}
+            className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border transition-colors ${style} ${!submitted ? "cursor-pointer" : "cursor-default"}`}
           >
-            <span className="text-text-primary">{answer.text}</span>
+            <span className="text-sm sm:text-base text-text-primary">{answer.text}</span>
             {submitted && answer.notes && (
               <p className="text-sm text-text-muted mt-1">{answer.notes}</p>
             )}
@@ -63,7 +63,7 @@ export function MultiChoice({ answers, onAnswer }: Props) {
         <button
           onClick={handleSubmit}
           disabled={selected.size === 0}
-          className="mt-2 px-6 py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors self-start"
+          className="mt-2 w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           Submit
         </button>

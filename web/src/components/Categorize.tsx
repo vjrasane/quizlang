@@ -59,7 +59,7 @@ function DraggableItem({
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className={`text-sm px-3 py-1.5 rounded bg-bg-3 border border-border text-text-primary select-none inline-flex items-center gap-1.5 ${
+      className={`text-sm px-3 py-2 rounded bg-bg-3 border border-border text-text-primary select-none inline-flex items-center gap-1.5 touch-none ${
         isDragging ? "opacity-30" : ""
       } ${disabled ? "cursor-default" : "cursor-grab active:cursor-grabbing"}`}
     >
@@ -88,7 +88,7 @@ function DroppableZone({
       }`}
     >
       <h4 className="text-sm font-semibold text-accent mb-2">{label}</h4>
-      <div className="flex flex-wrap gap-1.5 min-h-[2rem]">{children}</div>
+      <div className="flex flex-wrap gap-1.5 min-h-[2.5rem]">{children}</div>
     </div>
   );
 }
@@ -104,12 +104,11 @@ function ResultItem({
 }) {
   return (
     <div
-      className={`text-sm px-3 py-1.5 rounded ${
+      className={`text-sm px-3 py-2 rounded ${
         correct
           ? "bg-correct-bg text-correct"
           : "bg-incorrect-bg text-incorrect"
       }`}
-      title={notes ?? undefined}
     >
       {text}
       {notes && <p className="text-xs opacity-75 mt-0.5">{notes}</p>}
@@ -182,13 +181,20 @@ export function Categorize({ categories, onAnswer }: Props) {
     : null;
   const activeItem = activeItemIdx !== null ? allItems[activeItemIdx] : null;
 
+  const gridCols =
+    categories.length >= 3
+      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+      : categories.length === 2
+        ? "grid-cols-1 sm:grid-cols-2"
+        : "grid-cols-1";
+
   return (
     <DndContext
       sensors={sensors}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 sm:gap-4">
         {!submitted && (
           <DroppableZone id={POOL_ID} label="Items">
             {unassigned.map(({ idx, text }) => (
@@ -207,12 +213,7 @@ export function Categorize({ categories, onAnswer }: Props) {
           </DroppableZone>
         )}
 
-        <div
-          className="grid gap-3"
-          style={{
-            gridTemplateColumns: `repeat(${Math.min(categories.length, 3)}, 1fr)`,
-          }}
-        >
+        <div className={`grid gap-3 ${gridCols}`}>
           {categories.map((cat, catIdx) =>
             submitted ? (
               <div
@@ -222,7 +223,7 @@ export function Categorize({ categories, onAnswer }: Props) {
                 <h4 className="text-sm font-semibold text-accent mb-2">
                   {cat.text}
                 </h4>
-                <div className="flex flex-wrap gap-1.5 min-h-[2rem]">
+                <div className="flex flex-wrap gap-1.5 min-h-[2.5rem]">
                   {allItems
                     .map((item, i) => ({ ...item, idx: i }))
                     .filter((item) => item.correctCategory === catIdx)
@@ -262,7 +263,7 @@ export function Categorize({ categories, onAnswer }: Props) {
           <button
             onClick={handleSubmit}
             disabled={!allAssigned}
-            className="px-6 py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors self-start"
+            className="w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             Submit
           </button>
@@ -271,7 +272,7 @@ export function Categorize({ categories, onAnswer }: Props) {
 
       <DragOverlay>
         {activeItem ? (
-          <div className="text-sm px-3 py-1.5 rounded bg-bg-3 border border-accent text-text-primary shadow-lg inline-flex items-center gap-1.5">
+          <div className="text-sm px-3 py-2 rounded bg-bg-3 border border-accent text-text-primary shadow-lg inline-flex items-center gap-1.5">
             <GripIcon />
             {activeItem.text}
           </div>

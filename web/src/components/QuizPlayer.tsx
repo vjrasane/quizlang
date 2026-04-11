@@ -35,7 +35,7 @@ export function QuizPlayer({ quizId }: Props) {
 
   if (!quiz) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-8 text-text-muted">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 text-text-muted">
         Loading...
       </div>
     );
@@ -46,15 +46,15 @@ export function QuizPlayer({ quizId }: Props) {
 
   if (finished) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-8">
-        <div className="bg-bg-1 border border-border rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-bold text-text-primary mb-2">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="bg-bg-1 border border-border rounded-lg p-6 sm:p-8 text-center">
+          <h2 className="text-xl sm:text-2xl font-bold text-text-primary mb-2">
             {name}
           </h2>
-          <p className="text-4xl font-bold text-accent mb-2">
+          <p className="text-3xl sm:text-4xl font-bold text-accent mb-2">
             {score} / {total}
           </p>
-          <p className="text-text-secondary mb-6">
+          <p className="text-text-secondary mb-4 sm:mb-6">
             {Math.round((score / total) * 100)}% correct
           </p>
           <div className="flex gap-3 justify-center">
@@ -65,13 +65,13 @@ export function QuizPlayer({ quizId }: Props) {
                 setAnswered(false);
                 setFinished(false);
               }}
-              className="px-6 py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover transition-colors"
+              className="px-5 sm:px-6 py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover transition-colors"
             >
               Try again
             </button>
             <a
               href="/"
-              className="px-6 py-2 bg-bg-2 text-text-primary font-semibold rounded-lg border border-border hover:border-accent transition-colors"
+              className="px-5 sm:px-6 py-2 bg-bg-2 text-text-primary font-semibold rounded-lg border border-border hover:border-accent transition-colors"
             >
               All quizzes
             </a>
@@ -98,20 +98,22 @@ export function QuizPlayer({ quizId }: Props) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-8">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
       <div className="flex items-center justify-between mb-2">
-        <h1 className="text-lg font-semibold text-text-secondary">{name}</h1>
-        <span className="text-sm text-text-muted">
+        <h1 className="text-base sm:text-lg font-semibold text-text-secondary truncate mr-2">
+          {name}
+        </h1>
+        <span className="text-sm text-text-muted whitespace-nowrap">
           {current + 1} / {total}
         </span>
       </div>
-      <div className="w-full h-1 bg-bg-2 rounded-full mb-6">
+      <div className="w-full h-1 bg-bg-2 rounded-full mb-4 sm:mb-6">
         <div
           className="h-1 bg-accent rounded-full transition-all"
           style={{ width: `${((current + 1) / total) * 100}%` }}
         />
       </div>
-      <div className="bg-bg-1 border border-border rounded-lg p-6">
+      <div className="bg-bg-1 border border-border rounded-lg p-4 sm:p-6">
         <QuestionView
           key={current}
           section={question}
@@ -120,7 +122,7 @@ export function QuizPlayer({ quizId }: Props) {
         {answered && (
           <button
             onClick={handleNext}
-            className="mt-6 px-6 py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover transition-colors"
+            className="mt-4 sm:mt-6 w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover transition-colors"
           >
             {current + 1 >= total ? "See results" : "Next"}
           </button>
