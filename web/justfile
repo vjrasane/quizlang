@@ -17,13 +17,16 @@ parse:
     quiz parse "$f" > "data/$(basename "$f" .quiz).json"; \
   done
 
-dev: types parse
+download-images: parse
+  ./scripts/download-images
+
+dev: types parse download-images
   npx astro dev
 
-site-build: types parse
+site-build: types parse download-images
   npx astro build
 
 storybook:
   npx storybook dev -p 6006
 
-build: types generate parse
+build: types generate parse download-images

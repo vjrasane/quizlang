@@ -1,43 +1,15 @@
-# Astro Starter Kit: Minimal
+# quizlang-web
 
-```sh
-npm create astro@latest -- --template minimal
-```
+## TODO
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- [ ] Improve categorize
+- [ ] Display answer notes
+- [ ] Display question image
+- [ ] E2E test for quiz UI
+- [ ] Persist quiz state in browser (localStorage)
+  - Store answers, current position, and shuffle seed
+  - On quiz update (hash mismatch), reset state gracefully instead of erroring
+  - Works with shuffled questions by persisting the seed
+  - Reset button in player to clear state and restart from beginning
+  - Results view at the end: score summary + list of incorrect questions
+  - Quiz list page: show status (not started / in progress / completed)

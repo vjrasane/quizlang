@@ -1,6 +1,7 @@
 ---
 name: Aurinkokunta-tietovisa
 category: Avaruus
+image: https://upload.wikimedia.org/wikipedia/commons/7/72/Solar_system_scale.jpg
 tags:
   - aurinkokunta
   - planeetat
@@ -9,6 +10,8 @@ tags:
 ---
 
 # Mikä on aurinkokunnan suurin planeetta?
+
+@image: https://upload.wikimedia.org/wikipedia/commons/5/5a/Jupiter_by_Cassini-Huygens.jpg
 
 = Jupiter
 - Saturnus
