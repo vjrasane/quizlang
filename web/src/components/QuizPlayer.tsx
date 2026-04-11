@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import type { Quiz, Section } from "@/src/types/quiz";
 import { QuestionView } from "./QuestionView";
 import { ActionButton } from "./ActionButton";
-import { useLocale, type Locale } from "@/src/i18n";
+import { useLocale, LocaleOverrideProvider, type Locale } from "@/src/i18n";
 import { routes } from "@/src/routes";
 
 interface Props {
@@ -70,16 +70,6 @@ function prepareQuestions(
 
 export function QuizPlayer({ quizId, initialQuiz }: Props) {
   const [quiz, setQuiz] = useState<Quiz | null>(initialQuiz ?? null);
-  const [current, setCurrent] = useState(0);
-  const [score, setScore] = useState(0);
-  const [answered, setAnswered] = useState(false);
-  const [finished, setFinished] = useState(false);
-  const [attempt, setAttempt] = useState(0);
-
-  const frontmatterLocale = (quiz?.frontmatter as any)?.language as
-    | Locale
-    | undefined;
-  const { t } = useLocale(frontmatterLocale);
 
   useEffect(() => {
     if (initialQuiz) return;
@@ -88,18 +78,43 @@ export function QuizPlayer({ quizId, initialQuiz }: Props) {
       .then(setQuiz);
   }, [quizId, initialQuiz]);
 
-  const questions = useMemo(
-    () => (quiz ? prepareQuestions(quiz) : []),
-    [quiz, attempt],
-  );
+  const frontmatterLocale = (quiz?.frontmatter as any)?.language as
+    | Locale
+    | undefined;
 
   if (!quiz) {
     return (
       <div className="text-text-muted">
-        {t("loading")}
+        <LoadingMessage />
       </div>
     );
   }
+
+  return (
+    <LocaleOverrideProvider value={frontmatterLocale ?? null}>
+      <QuizPlayerInner quiz={quiz} quizId={quizId} />
+    </LocaleOverrideProvider>
+  );
+}
+
+function LoadingMessage() {
+  const { t } = useLocale();
+  return <>{t("loading")}</>;
+}
+
+function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
+  const [current, setCurrent] = useState(0);
+  const [score, setScore] = useState(0);
+  const [answered, setAnswered] = useState(false);
+  const [finished, setFinished] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+
+  const { t } = useLocale();
+
+  const questions = useMemo(
+    () => prepareQuestions(quiz),
+    [quiz, attempt],
+  );
 
   const name = (quiz.frontmatter as any)?.name ?? quizId;
   const total = questions.length;

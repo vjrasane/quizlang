@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, createContext, useContext } from "react";
 
 export type Locale = "en" | "fi";
 
@@ -61,13 +61,18 @@ function getBrowserLocale(): Locale | null {
   return null;
 }
 
-export function useLocale(defaultLocale?: Locale) {
-  const [locale, setLocaleState] = useState<Locale>(
-    () => getStoredLocale() ?? defaultLocale ?? getBrowserLocale() ?? "en",
+const LocaleOverrideContext = createContext<Locale | null>(null);
+export const LocaleOverrideProvider = LocaleOverrideContext.Provider;
+
+export function useLocale() {
+  const override = useContext(LocaleOverrideContext);
+
+  const [siteLocale, setSiteLocaleState] = useState<Locale>(
+    () => getStoredLocale() ?? getBrowserLocale() ?? "en",
   );
 
   const setLocale = useCallback((next: Locale) => {
-    setLocaleState(next);
+    setSiteLocaleState(next);
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {}
@@ -76,15 +81,17 @@ export function useLocale(defaultLocale?: Locale) {
 
   useEffect(() => {
     const stored = getStoredLocale();
-    if (stored && stored !== locale) setLocaleState(stored);
+    if (stored && stored !== siteLocale) setSiteLocaleState(stored);
 
     const handler = (e: Event) => {
       const next = (e as CustomEvent<Locale>).detail;
-      if (next === "en" || next === "fi") setLocaleState(next);
+      if (next === "en" || next === "fi") setSiteLocaleState(next);
     };
     window.addEventListener(EVENT_NAME, handler);
     return () => window.removeEventListener(EVENT_NAME, handler);
   }, []);
+
+  const locale = override ?? siteLocale;
 
   const translate = useCallback(
     (key: string, params?: Record<string, string | number>) =>
