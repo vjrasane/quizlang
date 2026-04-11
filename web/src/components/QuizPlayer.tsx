@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import type { Quiz, Section } from "@/src/types/quiz";
 import { QuestionView } from "./QuestionView";
+import { useLocale, type Locale } from "@/src/i18n";
 
 interface Props {
   quizId: string;
@@ -22,8 +23,13 @@ export function QuizPlayer({ quizId }: Props) {
   const [answered, setAnswered] = useState(false);
   const [finished, setFinished] = useState(false);
 
+  const frontmatterLocale = (quiz?.frontmatter as any)?.language as
+    | Locale
+    | undefined;
+  const { t } = useLocale(frontmatterLocale);
+
   useEffect(() => {
-    fetch(`/play/${quizId}.json`)
+    fetch(`${import.meta.env.BASE_URL}play/${quizId}.json`)
       .then((r) => r.json())
       .then(setQuiz);
   }, [quizId]);
@@ -36,7 +42,7 @@ export function QuizPlayer({ quizId }: Props) {
   if (!quiz) {
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 text-text-muted">
-        Loading...
+        {t("loading")}
       </div>
     );
   }
@@ -55,7 +61,8 @@ export function QuizPlayer({ quizId }: Props) {
             {score} / {total}
           </p>
           <p className="text-text-secondary mb-4 sm:mb-6">
-            {Math.round((score / total) * 100)}% correct
+            {Math.round((score / total) * 100)}
+            {t("percentCorrect")}
           </p>
           <div className="flex gap-3 justify-center">
             <button
@@ -67,13 +74,13 @@ export function QuizPlayer({ quizId }: Props) {
               }}
               className="px-5 sm:px-6 py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover transition-colors"
             >
-              Try again
+              {t("tryAgain")}
             </button>
             <a
-              href="/"
+              href={import.meta.env.BASE_URL}
               className="px-5 sm:px-6 py-2 bg-bg-2 text-text-primary font-semibold rounded-lg border border-border hover:border-accent transition-colors"
             >
-              All quizzes
+              {t("allQuizzes")}
             </a>
           </div>
         </div>
@@ -124,7 +131,7 @@ export function QuizPlayer({ quizId }: Props) {
             onClick={handleNext}
             className="mt-4 sm:mt-6 w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover transition-colors"
           >
-            {current + 1 >= total ? "See results" : "Next"}
+            {current + 1 >= total ? t("seeResults") : t("next")}
           </button>
         )}
       </div>

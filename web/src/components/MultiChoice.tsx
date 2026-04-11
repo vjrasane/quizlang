@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Answer } from "@/src/types/quiz";
+import { useLocale } from "@/src/i18n";
 
 interface Props {
   answers: Answer[];
@@ -9,6 +10,7 @@ interface Props {
 export function MultiChoice({ answers, onAnswer }: Props) {
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [submitted, setSubmitted] = useState(false);
+  const { t } = useLocale();
 
   const toggleSelection = (index: number) => {
     if (submitted) return;
@@ -65,7 +67,7 @@ export function MultiChoice({ answers, onAnswer }: Props) {
           disabled={selected.size === 0}
           className="mt-2 w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          Submit
+          {t("submit")}
         </button>
       )}
     </div>

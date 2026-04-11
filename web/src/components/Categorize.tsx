@@ -13,6 +13,7 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import type { Category } from "@/src/types/quiz";
+import { useLocale } from "@/src/i18n";
 
 interface Props {
   categories: Category[];
@@ -117,6 +118,8 @@ function ResultItem({
 }
 
 export function Categorize({ categories, onAnswer }: Props) {
+  const { t } = useLocale();
+
   const allItems = useMemo(() => {
     const items = categories.flatMap((cat, catIdx) =>
       cat.answers.map((a) => ({
@@ -196,7 +199,7 @@ export function Categorize({ categories, onAnswer }: Props) {
     >
       <div className="flex flex-col gap-3 sm:gap-4">
         {!submitted && (
-          <DroppableZone id={POOL_ID} label="Items">
+          <DroppableZone id={POOL_ID} label={t("items")}>
             {unassigned.map(({ idx, text }) => (
               <DraggableItem
                 key={idx}
@@ -207,7 +210,7 @@ export function Categorize({ categories, onAnswer }: Props) {
             ))}
             {unassigned.length === 0 && (
               <span className="text-xs text-text-muted italic">
-                All items assigned
+                {t("allItemsAssigned")}
               </span>
             )}
           </DroppableZone>
@@ -265,7 +268,7 @@ export function Categorize({ categories, onAnswer }: Props) {
             disabled={!allAssigned}
             className="w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            Submit
+            {t("submit")}
           </button>
         )}
       </div>

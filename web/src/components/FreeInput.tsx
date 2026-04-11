@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Answer } from "@/src/types/quiz";
+import { useLocale } from "@/src/i18n";
 
 interface Props {
   answer: Answer;
@@ -9,6 +10,7 @@ interface Props {
 export function FreeInput({ answer, onAnswer }: Props) {
   const [value, setValue] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const { t } = useLocale();
 
   const isCorrect =
     value.trim().toLowerCase() === answer.text.trim().toLowerCase();
@@ -31,7 +33,7 @@ export function FreeInput({ answer, onAnswer }: Props) {
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         disabled={submitted}
-        placeholder="Type your answer..."
+        placeholder={t("typeYourAnswer")}
         className={`w-full px-3 sm:px-4 py-3 rounded-lg border bg-bg-2 text-sm sm:text-base text-text-primary placeholder:text-text-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent ${
           submitted
             ? isCorrect
@@ -42,7 +44,7 @@ export function FreeInput({ answer, onAnswer }: Props) {
       />
       {submitted && !isCorrect && (
         <p className="text-sm text-correct">
-          Correct answer: {answer.text}
+          {t("correctAnswer")} {answer.text}
         </p>
       )}
       {submitted && answer.notes && (
@@ -54,7 +56,7 @@ export function FreeInput({ answer, onAnswer }: Props) {
           disabled={!value.trim()}
           className="w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-accent text-bg-0 font-semibold rounded-lg hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          Submit
+          {t("submit")}
         </button>
       )}
     </div>
