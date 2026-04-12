@@ -6,9 +6,10 @@ import { ActionButton } from "./ActionButton";
 interface Props {
   answer: Answer;
   onAnswer: (correct: boolean) => void;
+  displayCorrect?: boolean;
 }
 
-export function FreeInput({ answer, onAnswer }: Props) {
+export function FreeInput({ answer, onAnswer, displayCorrect = true }: Props) {
   const [value, setValue] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const { t } = useLocale();
@@ -26,6 +27,14 @@ export function FreeInput({ answer, onAnswer }: Props) {
     if (e.key === "Enter" && !submitted) handleSubmit();
   };
 
+  const inputStyle = submitted && displayCorrect
+    ? isCorrect
+      ? "border-correct bg-correct-bg"
+      : "border-incorrect bg-incorrect-bg"
+    : submitted
+      ? "border-selected bg-selected-bg"
+      : "border-border";
+
   return (
     <div className="flex flex-col gap-3">
       <input
@@ -35,20 +44,14 @@ export function FreeInput({ answer, onAnswer }: Props) {
         onKeyDown={handleKeyDown}
         disabled={submitted}
         placeholder={t("typeYourAnswer")}
-        className={`w-full px-3 sm:px-4 py-3 rounded-lg border bg-bg-2 text-sm sm:text-base text-text-primary placeholder:text-text-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent ${
-          submitted
-            ? isCorrect
-              ? "border-correct bg-correct-bg"
-              : "border-incorrect bg-incorrect-bg"
-            : "border-border"
-        }`}
+        className={`w-full px-3 sm:px-4 py-3 rounded-lg border bg-bg-2 text-sm sm:text-base text-text-primary placeholder:text-text-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent ${inputStyle}`}
       />
-      {submitted && !isCorrect && (
+      {submitted && displayCorrect && !isCorrect && (
         <p className="text-sm text-correct">
           {t("correctAnswer")} {answer.text}
         </p>
       )}
-      {submitted && answer.notes && (
+      {submitted && displayCorrect && answer.notes && (
         <p className="text-sm text-text-muted">{answer.notes}</p>
       )}
       {!submitted && (

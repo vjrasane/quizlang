@@ -23,6 +23,8 @@ const translations: Record<string, Record<Locale, string>> = {
   quizzes: { en: "Quizzes", fi: "Tietovisat" },
   nQuestions: { en: "{n} questions", fi: "{n} kysymystä" },
   questionCounter: { en: "Question", fi: "Kysymys" },
+  reset: { en: "Reset", fi: "Aloita alusta" },
+  incorrectQuestions: { en: "Incorrect answers", fi: "Väärät vastaukset" },
 };
 
 export function t(

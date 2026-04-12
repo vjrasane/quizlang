@@ -15,10 +15,13 @@ import {
 import type { Category } from "@/src/types/quiz";
 import { useLocale } from "@/src/i18n";
 import { ActionButton } from "./ActionButton";
+import { mulberry32 } from "./QuizPlayer";
 
 interface Props {
   categories: Category[];
   onAnswer: (correct: boolean) => void;
+  seed?: number;
+  displayCorrect?: boolean;
 }
 
 const POOL_ID = "pool";
@@ -99,26 +102,28 @@ function ResultItem({
   text,
   correct,
   notes,
+  displayCorrect = true,
 }: {
   text: string;
   correct: boolean;
   notes?: string | null;
+  displayCorrect?: boolean;
 }) {
+  const style = displayCorrect
+    ? correct
+      ? "bg-correct-bg text-correct"
+      : "bg-incorrect-bg text-incorrect"
+    : "bg-bg-3 text-text-primary";
+
   return (
-    <div
-      className={`text-sm px-3 py-2 rounded ${
-        correct
-          ? "bg-correct-bg text-correct"
-          : "bg-incorrect-bg text-incorrect"
-      }`}
-    >
+    <div className={`text-sm px-3 py-2 rounded ${style}`}>
       {text}
-      {notes && <p className="text-xs opacity-75 mt-0.5">{notes}</p>}
+      {displayCorrect && notes && <p className="text-xs opacity-75 mt-0.5">{notes}</p>}
     </div>
   );
 }
 
-export function Categorize({ categories, onAnswer }: Props) {
+export function Categorize({ categories, onAnswer, seed, displayCorrect = true }: Props) {
   const { t } = useLocale();
 
   const allItems = useMemo(() => {
@@ -129,8 +134,9 @@ export function Categorize({ categories, onAnswer }: Props) {
         notes: a.notes,
       })),
     );
-    return items.sort(() => Math.random() - 0.5);
-  }, [categories]);
+    const rng = seed != null ? mulberry32(seed) : Math.random;
+    return items.sort(() => rng() - 0.5);
+  }, [categories, seed]);
 
   const [assignments, setAssignments] = useState<
     Record<number, number | null>
@@ -237,6 +243,7 @@ export function Categorize({ categories, onAnswer }: Props) {
                         text={text}
                         correct={assignments[idx] === catIdx}
                         notes={notes}
+                        displayCorrect={displayCorrect}
                       />
                     ))}
                 </div>

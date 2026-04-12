@@ -6,9 +6,10 @@ import { ActionButton } from "./ActionButton";
 interface Props {
   answers: Answer[];
   onAnswer: (correct: boolean) => void;
+  displayCorrect?: boolean;
 }
 
-export function MultiChoice({ answers, onAnswer }: Props) {
+export function MultiChoice({ answers, onAnswer, displayCorrect = true }: Props) {
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [submitted, setSubmitted] = useState(false);
   const { t } = useLocale();
@@ -39,13 +40,18 @@ export function MultiChoice({ answers, onAnswer }: Props) {
           : "bg-bg-2 border-border hover:border-accent";
 
         if (submitted) {
-          if (answer.correct && selected.has(i))
-            style = "bg-correct-bg border-correct";
-          else if (answer.correct && !selected.has(i))
-            style = "bg-correct-bg border-correct opacity-60";
-          else if (!answer.correct && selected.has(i))
-            style = "bg-incorrect-bg border-incorrect";
-          else style = "bg-bg-2 border-border opacity-50";
+          if (displayCorrect) {
+            if (answer.correct && selected.has(i))
+              style = "bg-correct-bg border-correct";
+            else if (answer.correct && !selected.has(i))
+              style = "bg-correct-bg border-correct opacity-60";
+            else if (!answer.correct && selected.has(i))
+              style = "bg-incorrect-bg border-incorrect";
+            else style = "bg-bg-2 border-border opacity-50";
+          } else {
+            if (selected.has(i)) style = "bg-selected-bg border-selected";
+            else style = "bg-bg-2 border-border opacity-50";
+          }
         }
 
         return (
@@ -56,7 +62,7 @@ export function MultiChoice({ answers, onAnswer }: Props) {
             className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border transition-colors ${style} ${!submitted ? "cursor-pointer" : "cursor-default"}`}
           >
             <span className="text-sm sm:text-base text-text-primary">{answer.text}</span>
-            {submitted && answer.notes && (
+            {submitted && displayCorrect && answer.notes && (
               <p className="text-sm text-text-muted mt-1">{answer.notes}</p>
             )}
           </button>

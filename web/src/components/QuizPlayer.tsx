@@ -10,6 +10,58 @@ interface Props {
   initialQuiz?: Quiz;
 }
 
+interface PersistedQuizState {
+  seed: number;
+  quizHash: string;
+  results: boolean[];
+}
+
+const STORAGE_PREFIX = "quizlang-quiz-";
+
+export function mulberry32(seed: number): () => number {
+  let s = seed | 0;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function djb2Hash(str: string): string {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash + str.charCodeAt(i)) | 0;
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function generateSeed(): number {
+  return Math.floor(Math.random() * 2 ** 32);
+}
+
+function loadQuizState(quizId: string): PersistedQuizState | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_PREFIX + quizId);
+    if (!raw) return null;
+    return JSON.parse(raw) as PersistedQuizState;
+  } catch {
+    return null;
+  }
+}
+
+function saveQuizState(quizId: string, state: PersistedQuizState): void {
+  try {
+    localStorage.setItem(STORAGE_PREFIX + quizId, JSON.stringify(state));
+  } catch {}
+}
+
+function clearQuizState(quizId: string): void {
+  try {
+    localStorage.removeItem(STORAGE_PREFIX + quizId);
+  } catch {}
+}
+
 function collectQuestions(sections: Section[]): Section[] {
   const result: Section[] = [];
   for (const section of sections) {
@@ -19,22 +71,22 @@ function collectQuestions(sections: Section[]): Section[] {
   return result;
 }
 
-function shuffle<T>(arr: T[]): T[] {
+function shuffle<T>(arr: T[], rng: () => number): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(rng() * (i + 1));
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
 }
 
-function shuffleAnswers(section: Section): Section {
+function shuffleAnswers(section: Section, rng: () => number): Section {
   const q = section.question;
   if (!q) return section;
   switch (q.type) {
     case "SingleChoice":
     case "MultiChoice":
-      return { ...section, question: { ...q, answers: shuffle(q.answers) } };
+      return { ...section, question: { ...q, answers: shuffle(q.answers, rng) } };
     case "Categorize":
       return {
         ...section,
@@ -42,7 +94,7 @@ function shuffleAnswers(section: Section): Section {
           ...q,
           categories: q.categories.map((c) => ({
             ...c,
-            answers: shuffle(c.answers),
+            answers: shuffle(c.answers, rng),
           })),
         },
       };
@@ -51,21 +103,26 @@ function shuffleAnswers(section: Section): Section {
   }
 }
 
-function prepareQuestions(
-  quiz: Quiz,
-): Section[] {
+function prepareQuestions(quiz: Quiz, seed: number): Section[] {
+  const rng = mulberry32(seed);
   const fm = quiz.frontmatter as Record<string, unknown> | undefined;
   const shouldShuffleQuestions = (fm?.shuffle_questions as boolean) ?? false;
   const globalShuffleAnswers = (fm?.shuffle_answers as boolean) ?? true;
 
   let questions = collectQuestions(quiz.items);
-  if (shouldShuffleQuestions) questions = shuffle(questions);
+  if (shouldShuffleQuestions) questions = shuffle(questions, rng);
 
   return questions.map((section) => {
     const meta = section.metadata as Record<string, unknown> | undefined;
     const shouldShuffle = (meta?.shuffle_answers as boolean) ?? globalShuffleAnswers;
-    return shouldShuffle ? shuffleAnswers(section) : section;
+    return shouldShuffle ? shuffleAnswers(section, rng) : section;
   });
+}
+
+function resolveDisplayCorrect(quiz: Quiz, section: Section): boolean {
+  const fm = quiz.frontmatter as Record<string, unknown> | undefined;
+  const meta = section.metadata as Record<string, unknown> | undefined;
+  return (meta?.display_correct as boolean) ?? (fm?.display_correct as boolean) ?? true;
 }
 
 export function QuizPlayer({ quizId, initialQuiz }: Props) {
@@ -103,23 +160,58 @@ function LoadingMessage() {
 }
 
 function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
-  const [current, setCurrent] = useState(0);
-  const [score, setScore] = useState(0);
+  const quizHash = useMemo(() => djb2Hash(JSON.stringify(quiz)), [quiz]);
+
+  const [seed, setSeed] = useState<number>(() => {
+    const stored = loadQuizState(quizId);
+    if (stored && stored.quizHash === quizHash) return stored.seed;
+    return generateSeed();
+  });
+
+  const [results, setResults] = useState<boolean[]>(() => {
+    const stored = loadQuizState(quizId);
+    if (stored && stored.quizHash === quizHash) return stored.results;
+    return [];
+  });
+
+  const [current, setCurrent] = useState(() => {
+    const stored = loadQuizState(quizId);
+    if (stored && stored.quizHash === quizHash) return stored.results.length;
+    return 0;
+  });
+
   const [answered, setAnswered] = useState(false);
-  const [finished, setFinished] = useState(false);
-  const [attempt, setAttempt] = useState(0);
 
   const { t } = useLocale();
 
   const questions = useMemo(
-    () => prepareQuestions(quiz),
-    [quiz, attempt],
+    () => prepareQuestions(quiz, seed),
+    [quiz, seed],
   );
 
-  const name = (quiz.frontmatter as any)?.name ?? quizId;
+  const score = results.filter(Boolean).length;
   const total = questions.length;
+  const finished = current >= total;
+
+  useEffect(() => {
+    saveQuizState(quizId, { seed, quizHash, results });
+  }, [quizId, seed, quizHash, results]);
+
+  const name = (quiz.frontmatter as any)?.name ?? quizId;
+
+  const handleReset = () => {
+    clearQuizState(quizId);
+    setSeed(generateSeed());
+    setResults([]);
+    setCurrent(0);
+    setAnswered(false);
+  };
 
   if (finished) {
+    const incorrectIndices = results
+      .map((correct, i) => (correct ? -1 : i))
+      .filter((i) => i >= 0);
+
     return (
       <div>
         <div className="bg-bg-1 border border-border rounded-lg p-6 sm:p-8 text-center">
@@ -133,16 +225,25 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
             {Math.round((score / total) * 100)}
             {t("percentCorrect")}
           </p>
+          {incorrectIndices.length > 0 && (
+            <div className="text-left mb-4 sm:mb-6">
+              <h3 className="text-sm font-semibold text-incorrect mb-2">
+                {t("incorrectQuestions")}
+              </h3>
+              <ul className="space-y-1">
+                {incorrectIndices.map((i) => (
+                  <li
+                    key={i}
+                    className="text-sm text-text-secondary bg-bg-2 rounded px-3 py-1.5"
+                  >
+                    {questions[i].header}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="flex gap-3 justify-center">
-            <ActionButton
-              onClick={() => {
-                setCurrent(0);
-                setScore(0);
-                setAnswered(false);
-                setFinished(false);
-                setAttempt((a) => a + 1);
-              }}
-            >
+            <ActionButton onClick={handleReset}>
               {t("tryAgain")}
             </ActionButton>
             <a
@@ -160,17 +261,13 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
   const question = questions[current];
 
   const handleAnswer = (correct: boolean) => {
-    if (correct) setScore((s) => s + 1);
+    setResults((prev) => [...prev, correct]);
     setAnswered(true);
   };
 
   const handleNext = () => {
-    if (current + 1 >= total) {
-      setFinished(true);
-    } else {
-      setCurrent((c) => c + 1);
-      setAnswered(false);
-    }
+    setCurrent((c) => c + 1);
+    setAnswered(false);
   };
 
   return (
@@ -179,9 +276,17 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
         <h1 className="text-base sm:text-lg font-semibold text-text-secondary truncate mr-2">
           {name}
         </h1>
-        <span className="text-sm text-text-muted whitespace-nowrap">
-          {current + 1} / {total}
-        </span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleReset}
+            className="text-xs text-text-muted hover:text-accent transition-colors"
+          >
+            {t("reset")}
+          </button>
+          <span className="text-sm text-text-muted whitespace-nowrap">
+            {current + 1} / {total}
+          </span>
+        </div>
       </div>
       <div className="w-full h-1 bg-bg-2 rounded-full mb-4 sm:mb-6">
         <div
@@ -191,9 +296,11 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
       </div>
       <div className="bg-bg-1 border border-border rounded-lg p-4 sm:p-6">
         <QuestionView
-          key={current}
+          key={`${seed}-${current}`}
           section={question}
           onAnswer={handleAnswer}
+          seed={seed ^ (current + 1)}
+          displayCorrect={resolveDisplayCorrect(quiz, question)}
         />
         {answered && (
           <ActionButton onClick={handleNext} className="mt-4 sm:mt-6">
