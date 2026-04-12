@@ -23,7 +23,7 @@
           {
             "label": null,
             "text": "Jupiter",
-            "notes": null,
+            "notes": "Jupiterin läpimitta on 11 kertaa maata suurempi",
             "correct": true
           },
           {
@@ -243,7 +243,7 @@
     },
     {
       "header": "Millä planeetalla vuorokausi on pidempi kuin sen vuosi?",
-      "text": "Venus pyörii akselinsa ympäri hyvin hitaasti.",
+      "text": null,
       "metadata": null,
       "question": {
         "type": "SingleChoice",
@@ -251,7 +251,7 @@
           {
             "label": null,
             "text": "Venus",
-            "notes": null,
+            "notes": "Venus pyörii akselinsa ympäri hyvin hitaasti.",
             "correct": true
           },
           {

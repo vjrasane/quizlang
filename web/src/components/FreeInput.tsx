@@ -51,8 +51,8 @@ export function FreeInput({ answer, onAnswer, displayCorrect = true }: Props) {
           {t("correctAnswer")} {answer.text}
         </p>
       )}
-      {submitted && displayCorrect && answer.notes && (
-        <p className="text-sm text-text-muted">{answer.notes}</p>
+      {submitted && answer.notes && (
+        <p className="text-sm text-text-muted px-2.5 py-1.5 rounded border border-black/15 bg-black/5">{answer.notes}</p>
       )}
       {!submitted && (
         <ActionButton onClick={handleSubmit} disabled={!value.trim()}>

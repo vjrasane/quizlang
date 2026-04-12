@@ -1,2 +1,5 @@
 dist
 storybook-static
+.mcp.json
+.playwright-mcp
+*.png

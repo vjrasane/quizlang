@@ -118,7 +118,7 @@ function ResultItem({
   return (
     <div className={`text-sm px-3 py-2 rounded ${style}`}>
       {text}
-      {displayCorrect && notes && <p className="text-xs opacity-75 mt-0.5">{notes}</p>}
+      {!correct && notes && <p className="text-xs opacity-75 mt-1.5 px-2 py-1 rounded border border-black/15 bg-black/5">{notes}</p>}
     </div>
   );
 }

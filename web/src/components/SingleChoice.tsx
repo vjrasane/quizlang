@@ -40,8 +40,8 @@ export function SingleChoice({ answers, onAnswer, displayCorrect = true }: Props
             className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border transition-colors ${style} ${!answered ? "cursor-pointer" : "cursor-default"}`}
           >
             <span className="text-sm sm:text-base text-text-primary">{answer.text}</span>
-            {answered && displayCorrect && answer.notes && (
-              <p className="text-sm text-text-muted mt-1">{answer.notes}</p>
+            {answered && answer.notes && (
+              <p className="text-sm text-text-muted mt-2 px-2.5 py-1.5 rounded border border-black/15 bg-black/5">{answer.notes}</p>
             )}
           </button>
         );
