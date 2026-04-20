@@ -1,5 +1,5 @@
 /target
-
+dist/
 # Devenv
 .devenv*
 devenv.local.nix
@@ -13,3 +13,4 @@ devenv.local.yaml
 
 node_modules
 .env
+.mcp.json

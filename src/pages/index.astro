@@ -1,0 +1,25 @@
+---
+import { getCollection } from "astro:content";
+import Base from "@/src/layouts/Base.astro";
+import { QuizList } from "@/src/components/QuizList";
+
+const entries = await getCollection("quizzes");
+
+const quizzes = entries.map((entry) => {
+  const quiz = entry.data;
+  const fm = quiz.frontmatter as Record<string, unknown> | undefined;
+  return {
+    id: entry.id,
+    name: (fm?.name as string) ?? entry.id,
+    category: fm?.category as string | undefined,
+    tags: (fm?.tags as string[]) ?? [],
+    questionCount: quiz.items.length,
+  };
+});
+---
+
+<Base title="Quizzes">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <QuizList quizzes={quizzes} client:only="react" />
+  </div>
+</Base>

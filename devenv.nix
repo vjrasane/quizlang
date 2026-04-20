@@ -7,9 +7,29 @@
 }:
 
 {
-  packages = [ pkgs.git ];
+  packages = [
+    pkgs.just
+    pkgs.chromium
+  ];
 
-  languages.rust.enable = true;
+  languages.javascript.enable = true;
+  languages.typescript.enable = true;
 
-  scripts.quiz.exec = ''cargo run --quiet -- "$@"'';
+  claude.code.enable = true;
+  claude.code.mcpServers = {
+    playwright = {
+      type = "stdio";
+      command = "npx";
+      args = [
+        "@playwright/mcp@latest"
+        "--headless"
+        "--executable-path"
+        "${pkgs.chromium}/bin/chromium"
+      ];
+    };
+    storybook = {
+      type = "http";
+      url = "http://localhost:6006/mcp";
+    };
+  };
 }

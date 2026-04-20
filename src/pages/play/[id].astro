@@ -1,0 +1,25 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import Base from "@/src/layouts/Base.astro";
+import { QuizPlayer } from "@/src/components/QuizPlayer";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const entries = await getCollection("quizzes");
+  return entries.map((entry) => ({
+    params: { id: entry.id },
+  }));
+};
+
+const { id } = Astro.params;
+const entries = await getCollection("quizzes");
+const entry = entries.find((e) => e.id === id)!;
+const quiz = entry.data;
+const name = (quiz.frontmatter as Record<string, unknown> | undefined)?.name as string ?? id;
+---
+
+<Base title={name}>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <QuizPlayer quizId={id!} client:only="react" />
+  </div>
+</Base>
