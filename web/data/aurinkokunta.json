@@ -1,8 +1,8 @@
 {
   "frontmatter": {
-    "category": "Avaruus",
-    "image": "images/35588227b6c0-Solar_system_scale.jpg",
     "name": "Aurinkokunta-tietovisa",
+    "category": "Avaruus",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/7/72/Solar_system_scale.jpg",
     "tags": [
       "aurinkokunta",
       "planeetat",
@@ -15,34 +15,34 @@
       "header": "Mikä on aurinkokunnan suurin planeetta?",
       "text": null,
       "metadata": {
-        "image": "images/68a0e7439084-Jupiter_by_Cassini-Huygens.jpg"
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Jupiter_by_Cassini-Huygens.jpg"
       },
       "question": {
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Jupiter",
-            "notes": "Jupiterin läpimitta on 11 kertaa maata suurempi",
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": "Jupiterin läpimitta on 11 kertaa maata suurempi"
           },
           {
-            "label": null,
             "text": "Saturnus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Neptunus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Uranus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -56,28 +56,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "8",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "9",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "7",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "10",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -91,28 +91,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Merkurius",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Venus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Maapallo",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Mars",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -126,28 +126,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Mars",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Venus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Merkurius",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Maapallo",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -161,28 +161,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Venus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Uranus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Neptunus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Mars",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -196,46 +196,46 @@
         "type": "MultiChoice",
         "answers": [
           {
-            "label": null,
             "text": "Merkurius",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Venus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Maapallo",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Mars",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Jupiter",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Saturnus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Neptunus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -249,28 +249,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Venus",
-            "notes": "Venus pyörii akselinsa ympäri hyvin hitaasti.",
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": "Venus pyörii akselinsa ympäri hyvin hitaasti."
           },
           {
-            "label": null,
             "text": "Merkurius",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Mars",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Uranus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -284,28 +284,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Titan",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Europa",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Ganymedes",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Kallisto",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -319,28 +319,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Venus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Merkurius",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Mars",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Jupiter",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -354,28 +354,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Europa",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Io",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Ganymedes",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Kallisto",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -389,28 +389,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Vety",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Helium",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Happi",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Hiili",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -427,28 +427,28 @@
             "text": "Planeetat",
             "answers": [
               {
-                "label": null,
                 "text": "Jupiter",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Saturnus",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Maapallo",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Mars",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           },
@@ -456,22 +456,22 @@
             "text": "Kääpiöplaneetat",
             "answers": [
               {
-                "label": null,
                 "text": "Pluto",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Eris",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Ceres",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           },
@@ -479,22 +479,22 @@
             "text": "Kuut",
             "answers": [
               {
-                "label": null,
                 "text": "Titan",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Europa",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Ganymedes",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           }
@@ -509,10 +509,10 @@
       "question": {
         "type": "FreeInput",
         "answer": {
-          "label": null,
           "text": "2006",
-          "notes": null,
-          "correct": true
+          "correct": true,
+          "label": null,
+          "notes": null
         }
       },
       "items": []
@@ -525,28 +525,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Saturnus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Jupiter",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Uranus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Neptunus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -560,46 +560,46 @@
         "type": "MultiChoice",
         "answers": [
           {
-            "label": null,
             "text": "Jupiter",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Saturnus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Uranus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Neptunus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Merkurius",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Venus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Mars",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -613,28 +613,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Olympus Mons",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Mauna Kea",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Kilimanjaro",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Mount Everest",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -648,28 +648,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Noin 8 minuuttia",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Noin 1 minuutti",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Noin 30 minuuttia",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Noin 1 tunti",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -683,28 +683,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Kuun ja Auringon vetovoima",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Maapallon pyöriminen",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Tuuli",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Merivirtaukset",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -721,28 +721,28 @@
             "text": "Lähellä Aurinkoa",
             "answers": [
               {
-                "label": null,
                 "text": "Merkurius",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Venus",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Maapallo",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Mars",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           },
@@ -750,28 +750,28 @@
             "text": "Kaukana Auringosta",
             "answers": [
               {
-                "label": null,
                 "text": "Jupiter",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Saturnus",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Uranus",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Neptunus",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           }
@@ -787,28 +787,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Voyager 1",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Voyager 2",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Pioneer 10",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "New Horizons",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },

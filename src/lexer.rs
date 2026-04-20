@@ -101,6 +101,8 @@ impl<'a> Lexer<'a> {
             }
         } else if let Some(text) = line.trim().strip_prefix('@') {
             TokenKind::Metadata(text.trim().to_string())
+        } else if line.starts_with(' ') || line.starts_with('\t') {
+            TokenKind::NoteText(line.trim_start().to_string())
         } else {
             TokenKind::Text(line.to_string())
         }

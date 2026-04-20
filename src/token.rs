@@ -10,6 +10,7 @@ pub enum TokenKind {
     SortItem { index: u32, text: String },
     MatchPair { left: String, right: String },
     Text(String),
+    NoteText(String),
     BlankLine,
 }
 
@@ -68,7 +69,7 @@ impl Token {
     }
 
     pub fn is_text(&self) -> bool {
-        matches!(self.kind, TokenKind::Text(_))
+        matches!(self.kind, TokenKind::Text(_) | TokenKind::NoteText(_))
     }
 
     pub fn is_metadata(&self) -> bool {

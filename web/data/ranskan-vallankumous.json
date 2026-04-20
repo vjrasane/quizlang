@@ -1,7 +1,7 @@
 {
   "frontmatter": {
-    "category": "Historia",
     "name": "Ranskan vallankumous",
+    "category": "Historia",
     "tags": [
       "historia",
       "vallankumous",
@@ -18,28 +18,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "1789",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "1776",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "1799",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "1804",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -53,28 +53,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Bastiljin valtaus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Versailles'n marssi",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Kuninkaan vangitseminen",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Kansalliskokouksen perustaminen",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -88,28 +88,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Ludvig XVI",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Ludvig XIV",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Ludvig XV",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Kaarle X",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -123,28 +123,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Ihmis- ja kansalaisoikeuksien julistus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Itsenäisyysjulistus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Ranskan perustuslaki",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Valistuksen julistus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -158,28 +158,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Toiseen säätyyn",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Ensimmäiseen säätyyn",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Kolmanteen säätyyn",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Neljänteen säätyyn",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -196,22 +196,22 @@
             "text": "Vallankumousjohtajat",
             "answers": [
               {
-                "label": null,
                 "text": "Maximilien Robespierre",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Georges Danton",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Jean-Paul Marat",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           },
@@ -219,16 +219,16 @@
             "text": "Kuninkaallinen perhe",
             "answers": [
               {
-                "label": null,
                 "text": "Ludvig XVI",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Marie Antoinette",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           },
@@ -236,16 +236,16 @@
             "text": "Sotilasjohtajat",
             "answers": [
               {
-                "label": null,
                 "text": "Napoleon Bonaparte",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Markiisi de Lafayette",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           }
@@ -261,40 +261,40 @@
         "type": "MultiChoice",
         "answers": [
           {
-            "label": null,
             "text": "Vapaus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Veljeys",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Tasa-arvo",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Oikeus",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Voima",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Kunnia",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -308,28 +308,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Jakobiinien johtama diktatuurikausi, jolloin tuhansia teloitettiin",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Sodan aika Englantia vastaan",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Nälänhädän aiheuttama kansannousu",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Napoleonin sotaretki Egyptiin",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -343,28 +343,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Giljotiini",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Hirttäminen",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Ampuminen",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Mestaus miekalla",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -378,28 +378,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Maximilien Robespierre",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Napoleon Bonaparte",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Georges Danton",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Markiisi de Lafayette",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -413,28 +413,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "1793",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "1789",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "1791",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "1795",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -448,28 +448,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Tasavalta",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Diktatuuri",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Perustuslaillinen monarkia",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Keisarikunta",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -483,28 +483,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Rahvas eli tavallinen kansa",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Aatelisto",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Papisto",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Sotilaat",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -518,28 +518,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Napoleon Bonaparte",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Maximilien Robespierre",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Markiisi de Lafayette",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Georges Danton",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -556,22 +556,22 @@
             "text": "1789",
             "answers": [
               {
-                "label": null,
                 "text": "Bastiljin valtaus",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Ihmis- ja kansalaisoikeuksien julistus",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Säätyerioikeuksien lakkauttaminen",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           },
@@ -579,16 +579,16 @@
             "text": "1792",
             "answers": [
               {
-                "label": null,
                 "text": "Monarkian lakkauttaminen",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Tasavallan julistaminen",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           },
@@ -596,16 +596,16 @@
             "text": "1793-1794",
             "answers": [
               {
-                "label": null,
                 "text": "Ludvig XVI:n teloitus",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               },
               {
-                "label": null,
                 "text": "Terrorin aika",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           },
@@ -613,10 +613,10 @@
             "text": "1799",
             "answers": [
               {
-                "label": null,
                 "text": "Napoleonin vallankaappaus",
-                "notes": null,
-                "correct": false
+                "correct": false,
+                "label": null,
+                "notes": null
               }
             ]
           }
@@ -632,40 +632,40 @@
         "type": "MultiChoice",
         "answers": [
           {
-            "label": null,
             "text": "Valtion velkaongelmat",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Ruokapula ja nälänhätä",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Säätyjen välinen eriarvoisuus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Valistusfilosofian vaikutus",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Vieraan valtion hyökkäys",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Rutto",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -679,28 +679,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Hänet teloitettiin giljotiinilla vuonna 1793",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Hän pakeni Itävaltaan",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Hän vangittiin loppuelämäkseen",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Hän luopui kruunusta vapaaehtoisesti",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -714,28 +714,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Valtiopäivät (Etats generaux)",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Kansalliskokous",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Senaatti",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Aatelisneuvosto",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -749,28 +749,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Direktorio",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Konventti",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Konsultti",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Senaatti",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },
@@ -784,28 +784,28 @@
         "type": "SingleChoice",
         "answers": [
           {
-            "label": null,
             "text": "Se levitti demokratian ja kansalaisoikeuksien aatteita",
-            "notes": null,
-            "correct": true
+            "correct": true,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Se johti Euroopan yhdistymiseen",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Se vahvisti monarkioita kaikkialla",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           },
           {
-            "label": null,
             "text": "Sillä ei ollut merkittävää vaikutusta muihin maihin",
-            "notes": null,
-            "correct": false
+            "correct": false,
+            "label": null,
+            "notes": null
           }
         ]
       },

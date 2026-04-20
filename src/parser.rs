@@ -84,7 +84,7 @@ impl Parser {
     fn parse_text_block(&mut self) -> Option<String> {
         let mut lines = Vec::new();
         while let Some(Token {
-            kind: TokenKind::Text(_),
+            kind: TokenKind::Text(_) | TokenKind::NoteText(_),
             content,
             ..
         }) = self.peek()
@@ -96,6 +96,37 @@ impl Parser {
             None
         } else {
             Some(lines.join("\n"))
+        }
+    }
+
+    fn collect_notes(&mut self) -> Option<String> {
+        let mut notes = Vec::new();
+        loop {
+            match self.peek_kind() {
+                Some(TokenKind::Text(note) | TokenKind::NoteText(note)) => {
+                    notes.push(note.clone());
+                    self.advance();
+                }
+                Some(TokenKind::BlankLine) => {
+                    let saved_pos = self.pos;
+                    self.skip_blanklines();
+                    match self.peek_kind() {
+                        Some(TokenKind::NoteText(_)) => {
+                            notes.push(String::new());
+                        }
+                        _ => {
+                            self.pos = saved_pos;
+                            break;
+                        }
+                    }
+                }
+                _ => break,
+            }
+        }
+        if notes.is_empty() {
+            None
+        } else {
+            Some(notes.join("\n"))
         }
     }
 
@@ -112,23 +143,12 @@ impl Parser {
         };
         self.advance();
 
-        let mut notes = Vec::new();
-        while let Some(Token {
-            kind: TokenKind::Text(note),
-            ..
-        }) = self.peek()
-        {
-            notes.push(note.clone());
-            self.advance();
-        }
+        let notes = self.collect_notes();
 
         Ok(Answer {
             label,
             text,
-            notes: match &notes[..] {
-                [] => None,
-                n => Some(n.join("\n")),
-            },
+            notes,
             correct,
         })
     }
@@ -206,23 +226,10 @@ impl Parser {
                     let index = *index;
                     let text = text.clone();
                     self.advance();
-                    let mut notes = Vec::new();
-                    while let Some(Token {
-                        kind: TokenKind::Text(note),
-                        ..
-                    }) = self.peek()
-                    {
-                        notes.push(note.clone());
-                        self.advance();
-                    }
                     items.push(SortItem {
                         text,
                         key: index,
-                        notes: if notes.is_empty() {
-                            None
-                        } else {
-                            Some(notes.join("\n"))
-                        },
+                        notes: self.collect_notes(),
                     });
                 }
                 _ => break,
@@ -240,23 +247,10 @@ impl Parser {
                     let left = left.clone();
                     let right = right.clone();
                     self.advance();
-                    let mut notes = Vec::new();
-                    while let Some(Token {
-                        kind: TokenKind::Text(note),
-                        ..
-                    }) = self.peek()
-                    {
-                        notes.push(note.clone());
-                        self.advance();
-                    }
                     pairs.push(MatchPair {
                         left,
                         right,
-                        notes: if notes.is_empty() {
-                            None
-                        } else {
-                            Some(notes.join("\n"))
-                        },
+                        notes: self.collect_notes(),
                     });
                 }
                 _ => break,
@@ -817,5 +811,118 @@ mod tests {
         assert!(answers[0].correct);
         assert_eq!(answers[1].text, "3");
         assert!(!answers[1].correct);
+    }
+
+    #[test]
+    fn test_indented_multiline_notes() {
+        let input = indoc! {"
+            # Which country is largest?
+
+            - India
+            = Russia
+              Russia is the largest country
+              by land area.
+            - China
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let Question::SingleChoice { answers } = section.question.as_ref().unwrap() else {
+            panic!("expected single choice");
+        };
+        assert_eq!(answers[1].text, "Russia");
+        assert_eq!(
+            answers[1].notes.as_deref(),
+            Some("Russia is the largest country\nby land area.")
+        );
+        assert_eq!(answers[2].text, "China");
+        assert!(answers[2].notes.is_none());
+    }
+
+    #[test]
+    fn test_indented_notes_with_blank_lines() {
+        let input = indoc! {"
+            # Which country is largest?
+
+            = Russia
+              First paragraph.
+
+              Second paragraph.
+            - China
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let Question::SingleChoice { answers } = section.question.as_ref().unwrap() else {
+            panic!("expected single choice");
+        };
+        assert_eq!(
+            answers[0].notes.as_deref(),
+            Some("First paragraph.\n\nSecond paragraph.")
+        );
+        assert!(answers[1].notes.is_none());
+    }
+
+    #[test]
+    fn test_blank_line_after_unindented_note_stops() {
+        let input = indoc! {"
+            # Question
+
+            = answer
+            A note
+
+            - wrong
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let Question::SingleChoice { answers } = section.question.as_ref().unwrap() else {
+            panic!("expected single choice");
+        };
+        assert_eq!(answers[0].notes.as_deref(), Some("A note"));
+        assert_eq!(answers[1].text, "wrong");
+    }
+
+    #[test]
+    fn test_indented_notes_on_sort_items() {
+        let input = indoc! {"
+            # Sort these events
+
+            1. World War I begins
+              Started in 1914.
+
+              Triggered by assassination.
+            2. World War II begins
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let Question::Sorting { items } = section.question.as_ref().unwrap() else {
+            panic!("expected sorting question");
+        };
+        assert_eq!(
+            items[0].notes.as_deref(),
+            Some("Started in 1914.\n\nTriggered by assassination.")
+        );
+        assert!(items[1].notes.is_none());
+    }
+
+    #[test]
+    fn test_indented_notes_on_match_pairs() {
+        let input = indoc! {"
+            # Match capitals
+
+            ~ Paris == France
+              City of Light.
+
+              Most visited city in Europe.
+            ~ Berlin == Germany
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let Question::Matching { pairs } = section.question.as_ref().unwrap() else {
+            panic!("expected matching question");
+        };
+        assert_eq!(
+            pairs[0].notes.as_deref(),
+            Some("City of Light.\n\nMost visited city in Europe.")
+        );
+        assert!(pairs[1].notes.is_none());
     }
 }
