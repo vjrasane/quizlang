@@ -7,6 +7,8 @@ pub enum TokenKind {
     MultiCorrectAnswer { label: Option<String>, text: String },
     IncorrectAnswer { label: Option<String>, text: String },
     CategoryHeader { text: String },
+    SortItem { index: u32, text: String },
+    MatchPair { left: String, right: String },
     Text(String),
     BlankLine,
 }
@@ -53,8 +55,16 @@ impl Token {
         matches!(self.kind, TokenKind::CategoryHeader { .. })
     }
 
+    pub fn is_sort_item(&self) -> bool {
+        matches!(self.kind, TokenKind::SortItem { .. })
+    }
+
+    pub fn is_match_pair(&self) -> bool {
+        matches!(self.kind, TokenKind::MatchPair { .. })
+    }
+
     pub fn is_question(&self) -> bool {
-        self.is_answer() || self.is_category()
+        self.is_answer() || self.is_category() || self.is_sort_item() || self.is_match_pair()
     }
 
     pub fn is_text(&self) -> bool {

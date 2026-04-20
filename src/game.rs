@@ -39,6 +39,8 @@ enum CorrectAnswer {
     Any(Vec<Answer>),
     All(Vec<Answer>),
     Category(Category),
+    SortOrder(Vec<SortItem>),
+    Match(MatchPair),
 }
 
 impl GameState {
@@ -80,6 +82,8 @@ impl GameState {
             Question::SingleChoice { answers } => self.ask_single_choice(text, answers)?,
             Question::MultiChoice { answers } => self.ask_multi_choice(text, answers)?,
             Question::Categorize { categories } => self.ask_categorize(text, categories)?,
+            Question::Sorting { items } => self.ask_sorting(text, items)?,
+            Question::Matching { pairs } => self.ask_matching(text, pairs)?,
         };
 
         match result {
@@ -108,6 +112,24 @@ impl GameState {
                 println!(
                     "Incorrect. The correct category for the answers was: {}\n",
                     cat.text
+                );
+            }
+            QuestionResult::Incorrect(CorrectAnswer::SortOrder(items)) => {
+                let correct_order: Vec<&str> = items.iter().map(|i| i.text.as_str()).collect();
+                println!(
+                    "Incorrect. The correct order was:\n{}\n",
+                    correct_order
+                        .iter()
+                        .enumerate()
+                        .map(|(i, t)| format!("  {}. {}", i + 1, t))
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                );
+            }
+            QuestionResult::Incorrect(CorrectAnswer::Match(pair)) => {
+                println!(
+                    "Incorrect. The correct match was: {} → {}\n",
+                    pair.left, pair.right
                 );
             }
         }
@@ -214,6 +236,68 @@ impl GameState {
             if selected != category.text {
                 return Ok(QuestionResult::Incorrect(CorrectAnswer::Category(
                     category.clone(),
+                )));
+            }
+        }
+
+        Ok(QuestionResult::Correct)
+    }
+
+    fn ask_sorting(
+        &self,
+        question_text: &str,
+        items: &[SortItem],
+    ) -> Result<QuestionResult, InquireError> {
+        println!("{}", question_text);
+
+        let mut sorted = items.to_vec();
+        sorted.sort_by_key(|i| i.key);
+
+        let mut shuffled = items.to_vec();
+        shuffled.shuffle(&mut rand::rng());
+
+        let labels: Vec<String> = shuffled.iter().map(|i| i.text.clone()).collect();
+
+        let mut user_order: Vec<String> = Vec::new();
+        for position in 1..=labels.len() {
+            let remaining: Vec<String> = labels
+                .iter()
+                .filter(|l| !user_order.contains(l))
+                .cloned()
+                .collect();
+            let selected = Select::new(&format!("Position {}:", position), remaining).prompt()?;
+            user_order.push(selected);
+        }
+
+        let correct_order: Vec<&str> = sorted.iter().map(|i| i.text.as_str()).collect();
+        if user_order.iter().map(|s| s.as_str()).collect::<Vec<_>>() == correct_order {
+            Ok(QuestionResult::Correct)
+        } else {
+            Ok(QuestionResult::Incorrect(CorrectAnswer::SortOrder(sorted)))
+        }
+    }
+
+    fn ask_matching(
+        &self,
+        question_text: &str,
+        pairs: &[MatchPair],
+    ) -> Result<QuestionResult, InquireError> {
+        println!("{}", question_text);
+
+        let mut rights: Vec<&str> = pairs.iter().map(|p| p.right.as_str()).collect();
+        rights.shuffle(&mut rand::rng());
+
+        for pair in pairs {
+            let options = rights.clone();
+            let selected = Select::new(
+                &format!("'{}' matches with:", pair.left),
+                options,
+            )
+            .prompt()?;
+
+            if selected != pair.right {
+                return Ok(QuestionResult::Incorrect(CorrectAnswer::Match(
+                    pair.clone(),
                 )));
             }
         }

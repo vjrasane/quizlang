@@ -60,6 +60,27 @@
         }
       }
     },
+    "MatchPair": {
+      "type": "object",
+      "required": [
+        "left",
+        "right"
+      ],
+      "properties": {
+        "left": {
+          "type": "string"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "right": {
+          "type": "string"
+        }
+      }
+    },
     "Question": {
       "oneOf": [
         {
@@ -142,6 +163,48 @@
               ]
             }
           }
+        },
+        {
+          "type": "object",
+          "required": [
+            "items",
+            "type"
+          ],
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SortItem"
+              }
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Sorting"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "pairs",
+            "type"
+          ],
+          "properties": {
+            "pairs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MatchPair"
+              }
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Matching"
+              ]
+            }
+          }
         }
       ]
     },
@@ -177,6 +240,29 @@
             "string",
             "null"
           ]
+        }
+      }
+    },
+    "SortItem": {
+      "type": "object",
+      "required": [
+        "key",
+        "text"
+      ],
+      "properties": {
+        "key": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0.0
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text": {
+          "type": "string"
         }
       }
     }

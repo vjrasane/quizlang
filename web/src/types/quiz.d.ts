@@ -25,6 +25,16 @@ export type Question =
       categories: Category[];
       type: "Categorize";
       [k: string]: unknown;
+    }
+  | {
+      items: SortItem[];
+      type: "Sorting";
+      [k: string]: unknown;
+    }
+  | {
+      pairs: MatchPair[];
+      type: "Matching";
+      [k: string]: unknown;
     };
 
 export interface Quiz {
@@ -50,5 +60,17 @@ export interface Answer {
 export interface Category {
   answers: Answer[];
   text: string;
+  [k: string]: unknown;
+}
+export interface SortItem {
+  key: number;
+  notes?: string | null;
+  text: string;
+  [k: string]: unknown;
+}
+export interface MatchPair {
+  left: string;
+  notes?: string | null;
+  right: string;
   [k: string]: unknown;
 }

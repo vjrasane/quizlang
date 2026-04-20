@@ -90,6 +90,10 @@ impl<'a> Lexer<'a> {
             TokenKind::IncorrectAnswer { label, text }
         } else if let Some(text) = self.strip_marker(line, '>') {
             TokenKind::CategoryHeader { text }
+        } else if let Some((index, text)) = self.parse_sort_item_line(line) {
+            TokenKind::SortItem { index, text }
+        } else if let Some((left, right)) = self.parse_match_pair_line(line) {
+            TokenKind::MatchPair { left, right }
         } else if let (Some(label), text) = self.extract_label(line) {
             TokenKind::IncorrectAnswer {
                 label: Some(label),
@@ -132,6 +136,43 @@ impl<'a> Lexer<'a> {
         } else {
             None
         }
+    }
+
+    fn parse_sort_item_line(&self, line: &str) -> Option<(u32, String)> {
+        let trimmed = line.trim_start();
+        let digit_end = trimmed.find(|c: char| !c.is_ascii_digit())?;
+        if digit_end == 0 {
+            return None;
+        }
+        let rest = &trimmed[digit_end..];
+        if !rest.starts_with(". ") {
+            return None;
+        }
+        let index: u32 = trimmed[..digit_end].parse().ok()?;
+        let text = rest[2..].trim().to_string();
+        if text.is_empty() {
+            return None;
+        }
+        Some((index, text))
+    }
+
+    fn parse_match_pair_line(&self, line: &str) -> Option<(String, String)> {
+        let trimmed = line.trim_start();
+        if !trimmed.starts_with('~') {
+            return None;
+        }
+        let rest = &trimmed[1..];
+        if !rest.starts_with(' ') {
+            return None;
+        }
+        let rest = rest.trim_start();
+        let sep = rest.find("==")?;
+        let left = rest[..sep].trim().to_string();
+        let right = rest[sep + 2..].trim().to_string();
+        if left.is_empty() || right.is_empty() {
+            return None;
+        }
+        Some((left, right))
     }
 
     fn extract_label(&self, line: &str) -> (Option<String>, String) {
@@ -282,6 +323,58 @@ mod tests {
             TokenKind::IncorrectAnswer {
                 label: None,
                 text: "Option A".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn test_sort_item() {
+        let tokens = lex("1. First item").unwrap();
+        assert_eq!(tokens.len(), 1);
+        assert_eq!(
+            tokens[0].kind,
+            TokenKind::SortItem {
+                index: 1,
+                text: "First item".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn test_sort_item_large_index() {
+        let tokens = lex("42. Item forty-two").unwrap();
+        assert_eq!(tokens.len(), 1);
+        assert_eq!(
+            tokens[0].kind,
+            TokenKind::SortItem {
+                index: 42,
+                text: "Item forty-two".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn test_match_pair() {
+        let tokens = lex("~ Paris == France").unwrap();
+        assert_eq!(tokens.len(), 1);
+        assert_eq!(
+            tokens[0].kind,
+            TokenKind::MatchPair {
+                left: "Paris".to_string(),
+                right: "France".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn test_match_pair_extra_spaces() {
+        let tokens = lex("~  Berlin  ==  Germany ").unwrap();
+        assert_eq!(tokens.len(), 1);
+        assert_eq!(
+            tokens[0].kind,
+            TokenKind::MatchPair {
+                left: "Berlin".to_string(),
+                right: "Germany".to_string()
             }
         );
     }

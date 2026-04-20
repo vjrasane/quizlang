@@ -197,8 +197,88 @@ impl Parser {
         Ok(answers)
     }
 
+    fn parse_question_sorting(&mut self) -> Result<Question, ParseError> {
+        let mut items = Vec::new();
+        loop {
+            self.skip_blanklines();
+            match self.peek_kind() {
+                Some(TokenKind::SortItem { index, text }) => {
+                    let index = *index;
+                    let text = text.clone();
+                    self.advance();
+                    let mut notes = Vec::new();
+                    while let Some(Token {
+                        kind: TokenKind::Text(note),
+                        ..
+                    }) = self.peek()
+                    {
+                        notes.push(note.clone());
+                        self.advance();
+                    }
+                    items.push(SortItem {
+                        text,
+                        key: index,
+                        notes: if notes.is_empty() {
+                            None
+                        } else {
+                            Some(notes.join("\n"))
+                        },
+                    });
+                }
+                _ => break,
+            }
+        }
+        Ok(Question::Sorting { items })
+    }
+
+    fn parse_question_matching(&mut self) -> Result<Question, ParseError> {
+        let mut pairs = Vec::new();
+        loop {
+            self.skip_blanklines();
+            match self.peek_kind() {
+                Some(TokenKind::MatchPair { left, right }) => {
+                    let left = left.clone();
+                    let right = right.clone();
+                    self.advance();
+                    let mut notes = Vec::new();
+                    while let Some(Token {
+                        kind: TokenKind::Text(note),
+                        ..
+                    }) = self.peek()
+                    {
+                        notes.push(note.clone());
+                        self.advance();
+                    }
+                    pairs.push(MatchPair {
+                        left,
+                        right,
+                        notes: if notes.is_empty() {
+                            None
+                        } else {
+                            Some(notes.join("\n"))
+                        },
+                    });
+                }
+                _ => break,
+            }
+        }
+        Ok(Question::Matching { pairs })
+    }
+
     fn parse_question(&mut self) -> Result<Question, ParseError> {
         self.skip_blanklines();
+
+        if let Some(token) = self.peek()
+            && token.is_sort_item()
+        {
+            return self.parse_question_sorting();
+        }
+
+        if let Some(token) = self.peek()
+            && token.is_match_pair()
+        {
+            return self.parse_question_matching();
+        }
 
         if let Some(token) = self.peek()
             && token.is_category()
@@ -626,6 +706,95 @@ mod tests {
         assert_eq!(quiz.frontmatter.as_ref().unwrap()["name"], "My Quiz");
         let section = &quiz.items[0];
         assert_eq!(section.metadata.as_ref().unwrap()["when"], "always");
+    }
+
+    #[test]
+    fn test_sorting_question() {
+        let input = indoc! {"
+            # Sort these events chronologically
+
+            3. Moon landing
+            1. World War I begins
+            2. World War II begins
+            4. Fall of Berlin Wall
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        assert_eq!(section.header, "Sort these events chronologically");
+        let Question::Sorting { items } = section.question.as_ref().unwrap() else {
+            panic!("expected sorting question");
+        };
+        assert_eq!(items.len(), 4);
+        assert_eq!(items[0].text, "Moon landing");
+        assert_eq!(items[0].key, 3);
+        assert_eq!(items[1].text, "World War I begins");
+        assert_eq!(items[1].key, 1);
+        assert_eq!(items[2].text, "World War II begins");
+        assert_eq!(items[2].key, 2);
+        assert_eq!(items[3].text, "Fall of Berlin Wall");
+        assert_eq!(items[3].key, 4);
+    }
+
+    #[test]
+    fn test_sorting_question_with_notes() {
+        let input = indoc! {"
+            # Sort these events
+
+            1. World War I begins
+            Started in 1914
+            2. World War II begins
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let Question::Sorting { items } = section.question.as_ref().unwrap() else {
+            panic!("expected sorting question");
+        };
+        assert_eq!(items.len(), 2);
+        assert_eq!(items[0].notes.as_deref(), Some("Started in 1914"));
+        assert!(items[1].notes.is_none());
+    }
+
+    #[test]
+    fn test_matching_question() {
+        let input = indoc! {"
+            # Match capitals to their countries
+
+            ~ Paris == France
+            ~ Berlin == Germany
+            ~ Tokyo == Japan
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        assert_eq!(section.header, "Match capitals to their countries");
+        let Question::Matching { pairs } = section.question.as_ref().unwrap() else {
+            panic!("expected matching question");
+        };
+        assert_eq!(pairs.len(), 3);
+        assert_eq!(pairs[0].left, "Paris");
+        assert_eq!(pairs[0].right, "France");
+        assert_eq!(pairs[1].left, "Berlin");
+        assert_eq!(pairs[1].right, "Germany");
+        assert_eq!(pairs[2].left, "Tokyo");
+        assert_eq!(pairs[2].right, "Japan");
+    }
+
+    #[test]
+    fn test_matching_question_with_notes() {
+        let input = indoc! {"
+            # Match capitals
+
+            ~ Paris == France
+            City of Light
+            ~ Berlin == Germany
+        "};
+        let quiz = parse_input(input).unwrap();
+        let section = &quiz.items[0];
+        let Question::Matching { pairs } = section.question.as_ref().unwrap() else {
+            panic!("expected matching question");
+        };
+        assert_eq!(pairs.len(), 2);
+        assert_eq!(pairs[0].notes.as_deref(), Some("City of Light"));
+        assert!(pairs[1].notes.is_none());
     }
 
     #[test]

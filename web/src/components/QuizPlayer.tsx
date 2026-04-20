@@ -14,6 +14,7 @@ interface PersistedQuizState {
   seed: number;
   quizHash: string;
   results: boolean[];
+  answers: unknown[];
 }
 
 const STORAGE_PREFIX = "quizlang-quiz-";
@@ -119,12 +120,6 @@ function prepareQuestions(quiz: Quiz, seed: number): Section[] {
   });
 }
 
-function resolveDisplayCorrect(quiz: Quiz, section: Section): boolean {
-  const fm = quiz.frontmatter as Record<string, unknown> | undefined;
-  const meta = section.metadata as Record<string, unknown> | undefined;
-  return (meta?.display_correct as boolean) ?? (fm?.display_correct as boolean) ?? true;
-}
-
 export function QuizPlayer({ quizId, initialQuiz }: Props) {
   const [quiz, setQuiz] = useState<Quiz | null>(initialQuiz ?? null);
 
@@ -174,13 +169,21 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
     return [];
   });
 
+  const [answers, setAnswers] = useState<unknown[]>(() => {
+    const stored = loadQuizState(quizId);
+    if (stored && stored.quizHash === quizHash) return stored.answers ?? [];
+    return [];
+  });
+
   const [current, setCurrent] = useState(() => {
     const stored = loadQuizState(quizId);
     if (stored && stored.quizHash === quizHash) return stored.results.length;
     return 0;
   });
 
-  const [answered, setAnswered] = useState(false);
+  const [currentCorrect, setCurrentCorrect] = useState<boolean | null>(null);
+  const [firstAttemptCorrect, setFirstAttemptCorrect] = useState<boolean | null>(null);
+  const [currentAnswer, setCurrentAnswer] = useState<unknown>(null);
 
   const { t } = useLocale();
 
@@ -192,10 +195,11 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
   const score = results.filter(Boolean).length;
   const total = questions.length;
   const finished = current >= total;
+  const isReviewing = current < results.length;
 
   useEffect(() => {
-    saveQuizState(quizId, { seed, quizHash, results });
-  }, [quizId, seed, quizHash, results]);
+    saveQuizState(quizId, { seed, quizHash, results, answers });
+  }, [quizId, seed, quizHash, results, answers]);
 
   const name = (quiz.frontmatter as any)?.name ?? quizId;
 
@@ -203,8 +207,11 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
     clearQuizState(quizId);
     setSeed(generateSeed());
     setResults([]);
+    setAnswers([]);
     setCurrent(0);
-    setAnswered(false);
+    setCurrentCorrect(null);
+    setFirstAttemptCorrect(null);
+    setCurrentAnswer(null);
   };
 
   if (finished) {
@@ -253,6 +260,12 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
               {t("allQuizzes")}
             </a>
           </div>
+          <button
+            onClick={() => setCurrent(total - 1)}
+            className="text-sm text-text-muted hover:text-accent transition-colors cursor-pointer mt-4"
+          >
+            ← {t("goBack")}
+          </button>
         </div>
       </div>
     );
@@ -260,14 +273,33 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
 
   const question = questions[current];
 
-  const handleAnswer = (correct: boolean) => {
-    setResults((prev) => [...prev, correct]);
-    setAnswered(true);
+  const handleAnswer = (correct: boolean, answer: unknown) => {
+    if (firstAttemptCorrect === null) {
+      setFirstAttemptCorrect(correct);
+    }
+    setCurrentCorrect(correct);
+    setCurrentAnswer(answer);
   };
 
   const handleNext = () => {
-    setCurrent((c) => c + 1);
-    setAnswered(false);
+    if (isReviewing) {
+      setCurrent((c) => c + 1);
+    } else {
+      setResults((prev) => [...prev, firstAttemptCorrect!]);
+      setAnswers((prev) => [...prev, currentAnswer]);
+      setCurrent((c) => c + 1);
+      setCurrentCorrect(null);
+      setFirstAttemptCorrect(null);
+      setCurrentAnswer(null);
+    }
+  };
+
+  const handleBack = () => {
+    if (!isReviewing) {
+      setCurrentCorrect(null);
+      setFirstAttemptCorrect(null);
+    }
+    setCurrent((c) => c - 1);
   };
 
   return (
@@ -279,7 +311,7 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
         <div className="flex items-center gap-3">
           <button
             onClick={handleReset}
-            className="text-xs text-text-muted hover:text-accent transition-colors"
+            className="text-xs text-text-muted hover:text-accent transition-colors cursor-pointer"
           >
             {t("reset")}
           </button>
@@ -288,24 +320,39 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
           </span>
         </div>
       </div>
-      <div className="w-full h-1 bg-bg-2 rounded-full mb-4 sm:mb-6">
+      <div className="w-full h-1 bg-bg-2 rounded-full mb-2">
         <div
           className="h-1 bg-accent rounded-full transition-all"
           style={{ width: `${((current + 1) / total) * 100}%` }}
         />
       </div>
+      {current > 0 && (
+        <button
+          onClick={handleBack}
+          className="text-sm text-text-muted hover:text-accent transition-colors cursor-pointer mb-2"
+        >
+          ← {t("goBack")}
+        </button>
+      )}
       <div className="bg-bg-1 border border-border rounded-lg p-4 sm:p-6">
         <QuestionView
-          key={`${seed}-${current}`}
+          key={isReviewing ? `review-${current}` : `${seed}-${current}`}
           section={question}
           onAnswer={handleAnswer}
           seed={seed ^ (current + 1)}
-          displayCorrect={resolveDisplayCorrect(quiz, question)}
+          reviewAnswer={isReviewing ? answers[current] : undefined}
         />
-        {answered && (
-          <ActionButton onClick={handleNext} className="mt-4 sm:mt-6">
-            {current + 1 >= total ? t("seeResults") : t("next")}
-          </ActionButton>
+        {!isReviewing && currentCorrect === false && (
+          <p className="text-sm text-incorrect mt-4 sm:mt-6">
+            {t("wrongTryAgain")}
+          </p>
+        )}
+        {(isReviewing || currentCorrect === true) && (
+          <div className="mt-4 sm:mt-6">
+            <ActionButton onClick={handleNext}>
+              {!isReviewing && current + 1 >= total ? t("seeResults") : t("next")}
+            </ActionButton>
+          </div>
         )}
       </div>
     </div>

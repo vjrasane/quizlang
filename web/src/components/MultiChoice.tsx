@@ -5,17 +5,22 @@ import { ActionButton } from "./ActionButton";
 
 interface Props {
   answers: Answer[];
-  onAnswer: (correct: boolean) => void;
-  displayCorrect?: boolean;
+  onAnswer: (correct: boolean, answer: unknown) => void;
+  reviewAnswer?: number[];
 }
 
-export function MultiChoice({ answers, onAnswer, displayCorrect = true }: Props) {
-  const [selected, setSelected] = useState<Set<number>>(new Set());
-  const [submitted, setSubmitted] = useState(false);
+export function MultiChoice({ answers, onAnswer, reviewAnswer }: Props) {
+  const readOnly = reviewAnswer !== undefined;
+  const [selected, setSelected] = useState<Set<number>>(
+    () => new Set(reviewAnswer ?? []),
+  );
+  const [submitted, setSubmitted] = useState(readOnly);
+  const [locked, setLocked] = useState(readOnly);
   const { t } = useLocale();
 
   const toggleSelection = (index: number) => {
-    if (submitted) return;
+    if (locked) return;
+    if (submitted) setSubmitted(false);
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(index)) next.delete(index);
@@ -29,7 +34,8 @@ export function MultiChoice({ answers, onAnswer, displayCorrect = true }: Props)
     const allCorrect = answers.every(
       (a, i) => a.correct === selected.has(i),
     );
-    onAnswer(allCorrect);
+    if (allCorrect) setLocked(true);
+    onAnswer(allCorrect, [...selected]);
   };
 
   return (
@@ -40,17 +46,12 @@ export function MultiChoice({ answers, onAnswer, displayCorrect = true }: Props)
           : "bg-bg-2 border-border hover:border-accent";
 
         if (submitted) {
-          if (displayCorrect) {
-            if (answer.correct && selected.has(i))
-              style = "bg-correct-bg border-correct";
-            else if (answer.correct && !selected.has(i))
-              style = "bg-correct-bg border-correct opacity-60";
-            else if (!answer.correct && selected.has(i))
-              style = "bg-incorrect-bg border-incorrect";
-            else style = "bg-bg-2 border-border opacity-50";
+          if (selected.has(i)) {
+            style = answer.correct
+              ? "bg-correct-bg border-correct"
+              : "bg-incorrect-bg border-incorrect";
           } else {
-            if (selected.has(i)) style = "bg-selected-bg border-selected";
-            else style = "bg-bg-2 border-border opacity-50";
+            style = "bg-bg-2 border-border opacity-50";
           }
         }
 
@@ -58,17 +59,17 @@ export function MultiChoice({ answers, onAnswer, displayCorrect = true }: Props)
           <button
             key={i}
             onClick={() => toggleSelection(i)}
-            disabled={submitted}
-            className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border transition-colors ${style} ${!submitted ? "cursor-pointer" : "cursor-default"}`}
+            disabled={locked}
+            className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border transition-colors ${style} ${locked ? "cursor-default" : "cursor-pointer"}`}
           >
             <span className="text-sm sm:text-base text-text-primary">{answer.text}</span>
-            {submitted && answer.notes && (
+            {submitted && selected.has(i) && answer.notes && (
               <p className="text-sm text-text-muted mt-2 px-2.5 py-1.5 rounded border border-black/15 bg-black/5">{answer.notes}</p>
             )}
           </button>
         );
       })}
-      {!submitted && (
+      {!locked && (
         <ActionButton onClick={handleSubmit} disabled={selected.size === 0} className="mt-2">
           {t("submit")}
         </ActionButton>

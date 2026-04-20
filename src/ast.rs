@@ -23,12 +23,28 @@ pub enum Question {
     SingleChoice { answers: Vec<Answer> },
     MultiChoice { answers: Vec<Answer> },
     Categorize { categories: Vec<Category> },
+    Sorting { items: Vec<SortItem> },
+    Matching { pairs: Vec<MatchPair> },
 }
 
 #[derive(Debug, Clone, Serialize, JsonSchema)]
 pub struct Category {
     pub text: String,
     pub answers: Vec<Answer>,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, JsonSchema)]
+pub struct SortItem {
+    pub text: String,
+    pub key: u32,
+    pub notes: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, JsonSchema)]
+pub struct MatchPair {
+    pub left: String,
+    pub right: String,
+    pub notes: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, JsonSchema)]

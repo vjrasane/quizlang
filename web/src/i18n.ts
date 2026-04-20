@@ -25,6 +25,8 @@ const translations: Record<string, Record<Locale, string>> = {
   questionCounter: { en: "Question", fi: "Kysymys" },
   reset: { en: "Reset", fi: "Aloita alusta" },
   incorrectQuestions: { en: "Incorrect answers", fi: "Väärät vastaukset" },
+  wrongTryAgain: { en: "Incorrect — try again!", fi: "Väärin — yritä uudelleen!" },
+  goBack: { en: "Back", fi: "Edellinen" },
 };
 
 export function t(

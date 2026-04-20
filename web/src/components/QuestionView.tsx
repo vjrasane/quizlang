@@ -7,12 +7,12 @@ import { routes } from "@/src/routes";
 
 interface Props {
   section: Section;
-  onAnswer: (correct: boolean) => void;
+  onAnswer: (correct: boolean, answer: unknown) => void;
   seed?: number;
-  displayCorrect?: boolean;
+  reviewAnswer?: unknown;
 }
 
-export function QuestionView({ section, onAnswer, seed, displayCorrect = true }: Props) {
+export function QuestionView({ section, onAnswer, seed, reviewAnswer }: Props) {
   const { question } = section;
   if (!question) return null;
 
@@ -35,16 +35,33 @@ export function QuestionView({ section, onAnswer, seed, displayCorrect = true }:
         />
       )}
       {question.type === "SingleChoice" && (
-        <SingleChoice answers={question.answers} onAnswer={onAnswer} displayCorrect={displayCorrect} />
+        <SingleChoice
+          answers={question.answers}
+          onAnswer={onAnswer}
+          reviewAnswer={reviewAnswer as number | undefined}
+        />
       )}
       {question.type === "MultiChoice" && (
-        <MultiChoice answers={question.answers} onAnswer={onAnswer} displayCorrect={displayCorrect} />
+        <MultiChoice
+          answers={question.answers}
+          onAnswer={onAnswer}
+          reviewAnswer={reviewAnswer as number[] | undefined}
+        />
       )}
       {question.type === "FreeInput" && (
-        <FreeInput answer={question.answer} onAnswer={onAnswer} displayCorrect={displayCorrect} />
+        <FreeInput
+          answer={question.answer}
+          onAnswer={onAnswer}
+          reviewAnswer={reviewAnswer as string | undefined}
+        />
       )}
       {question.type === "Categorize" && (
-        <Categorize categories={question.categories} onAnswer={onAnswer} seed={seed} displayCorrect={displayCorrect} />
+        <Categorize
+          categories={question.categories}
+          onAnswer={onAnswer}
+          seed={seed}
+          reviewAnswer={reviewAnswer as Record<number, number | null> | undefined}
+        />
       )}
     </div>
   );

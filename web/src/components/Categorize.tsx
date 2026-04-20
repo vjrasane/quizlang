@@ -19,9 +19,9 @@ import { mulberry32 } from "./QuizPlayer";
 
 interface Props {
   categories: Category[];
-  onAnswer: (correct: boolean) => void;
+  onAnswer: (correct: boolean, answer: unknown) => void;
   seed?: number;
-  displayCorrect?: boolean;
+  reviewAnswer?: Record<number, number | null>;
 }
 
 const POOL_ID = "pool";
@@ -64,7 +64,7 @@ function DraggableItem({
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className={`text-sm px-3 py-2 rounded bg-bg-3 border border-border text-text-primary select-none inline-flex items-center gap-1.5 touch-none ${
+      className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border bg-bg-2 border-border text-sm sm:text-base text-text-primary select-none flex items-center gap-2 touch-none ${
         isDragging ? "opacity-30" : ""
       } ${disabled ? "cursor-default" : "cursor-grab active:cursor-grabbing"}`}
     >
@@ -93,7 +93,22 @@ function DroppableZone({
       }`}
     >
       <h4 className="text-sm font-semibold text-accent mb-2">{label}</h4>
-      <div className="flex flex-wrap gap-1.5 min-h-[2.5rem]">{children}</div>
+      <div className="flex flex-col gap-2 min-h-[2.5rem]">{children}</div>
+    </div>
+  );
+}
+
+function PoolZone({ children }: { children: React.ReactNode }) {
+  const { isOver, setNodeRef } = useDroppable({ id: POOL_ID });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`flex flex-col gap-2 min-h-[2.5rem] rounded-lg p-1 transition-colors ${
+        isOver ? "bg-bg-2" : ""
+      }`}
+    >
+      {children}
     </div>
   );
 }
@@ -102,29 +117,26 @@ function ResultItem({
   text,
   correct,
   notes,
-  displayCorrect = true,
 }: {
   text: string;
   correct: boolean;
   notes?: string | null;
-  displayCorrect?: boolean;
 }) {
-  const style = displayCorrect
-    ? correct
-      ? "bg-correct-bg text-correct"
-      : "bg-incorrect-bg text-incorrect"
-    : "bg-bg-3 text-text-primary";
+  const style = correct
+    ? "bg-correct-bg text-correct"
+    : "bg-incorrect-bg text-incorrect";
 
   return (
-    <div className={`text-sm px-3 py-2 rounded ${style}`}>
+    <div className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg ${style}`}>
       {text}
       {!correct && notes && <p className="text-xs opacity-75 mt-1.5 px-2 py-1 rounded border border-black/15 bg-black/5">{notes}</p>}
     </div>
   );
 }
 
-export function Categorize({ categories, onAnswer, seed, displayCorrect = true }: Props) {
+export function Categorize({ categories, onAnswer, seed, reviewAnswer }: Props) {
   const { t } = useLocale();
+  const readOnly = reviewAnswer !== undefined;
 
   const allItems = useMemo(() => {
     const items = categories.flatMap((cat, catIdx) =>
@@ -140,8 +152,9 @@ export function Categorize({ categories, onAnswer, seed, displayCorrect = true }
 
   const [assignments, setAssignments] = useState<
     Record<number, number | null>
-  >(() => Object.fromEntries(allItems.map((_, i) => [i, null])));
-  const [submitted, setSubmitted] = useState(false);
+  >(() => reviewAnswer ?? Object.fromEntries(allItems.map((_, i) => [i, null])));
+  const [submitted, setSubmitted] = useState(readOnly);
+  const [locked, setLocked] = useState(readOnly);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -165,7 +178,7 @@ export function Categorize({ categories, onAnswer, seed, displayCorrect = true }
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveId(null);
     const { active, over } = event;
-    if (!over || submitted) return;
+    if (!over || locked) return;
 
     const itemIdx = Number(String(active.id).replace("item-", ""));
     const overId = String(over.id);
@@ -183,20 +196,14 @@ export function Categorize({ categories, onAnswer, seed, displayCorrect = true }
     const allCorrect = allItems.every(
       (item, i) => assignments[i] === item.correctCategory,
     );
-    onAnswer(allCorrect);
+    if (allCorrect) setLocked(true);
+    onAnswer(allCorrect, { ...assignments });
   };
 
   const activeItemIdx = activeId
     ? Number(activeId.replace("item-", ""))
     : null;
   const activeItem = activeItemIdx !== null ? allItems[activeItemIdx] : null;
-
-  const gridCols =
-    categories.length >= 3
-      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-      : categories.length === 2
-        ? "grid-cols-1 sm:grid-cols-2"
-        : "grid-cols-1";
 
   return (
     <DndContext
@@ -206,24 +213,19 @@ export function Categorize({ categories, onAnswer, seed, displayCorrect = true }
     >
       <div className="flex flex-col gap-3 sm:gap-4">
         {!submitted && (
-          <DroppableZone id={POOL_ID} label={t("items")}>
+          <PoolZone>
             {unassigned.map(({ idx, text }) => (
               <DraggableItem
                 key={idx}
                 id={`item-${idx}`}
                 text={text}
-                disabled={submitted}
+                disabled={locked}
               />
             ))}
-            {unassigned.length === 0 && (
-              <span className="text-xs text-text-muted italic">
-                {t("allItemsAssigned")}
-              </span>
-            )}
-          </DroppableZone>
+          </PoolZone>
         )}
 
-        <div className={`grid gap-3 ${gridCols}`}>
+        <div className="flex flex-col gap-3">
           {categories.map((cat, catIdx) =>
             submitted ? (
               <div
@@ -233,17 +235,16 @@ export function Categorize({ categories, onAnswer, seed, displayCorrect = true }
                 <h4 className="text-sm font-semibold text-accent mb-2">
                   {cat.text}
                 </h4>
-                <div className="flex flex-wrap gap-1.5 min-h-[2.5rem]">
+                <div className="flex flex-col gap-2 min-h-[2.5rem]">
                   {allItems
                     .map((item, i) => ({ ...item, idx: i }))
-                    .filter((item) => item.correctCategory === catIdx)
-                    .map(({ idx, text, notes }) => (
+                    .filter((_, i) => assignments[i] === catIdx)
+                    .map(({ idx, text, notes, correctCategory }) => (
                       <ResultItem
                         key={idx}
                         text={text}
-                        correct={assignments[idx] === catIdx}
+                        correct={correctCategory === catIdx}
                         notes={notes}
-                        displayCorrect={displayCorrect}
                       />
                     ))}
                 </div>
@@ -262,7 +263,7 @@ export function Categorize({ categories, onAnswer, seed, displayCorrect = true }
                       key={idx}
                       id={`item-${idx}`}
                       text={text}
-                      disabled={submitted}
+                      disabled={locked}
                     />
                   ))}
               </DroppableZone>
@@ -270,16 +271,21 @@ export function Categorize({ categories, onAnswer, seed, displayCorrect = true }
           )}
         </div>
 
-        {!submitted && (
+        {!submitted && !locked && (
           <ActionButton onClick={handleSubmit} disabled={!allAssigned}>
             {t("submit")}
+          </ActionButton>
+        )}
+        {submitted && !locked && (
+          <ActionButton onClick={() => setSubmitted(false)}>
+            {t("tryAgain")}
           </ActionButton>
         )}
       </div>
 
       <DragOverlay>
         {activeItem ? (
-          <div className="text-sm px-3 py-2 rounded bg-bg-3 border border-accent text-text-primary shadow-lg inline-flex items-center gap-1.5">
+          <div className="w-full text-left px-3 sm:px-4 py-3 rounded-lg border border-accent bg-bg-2 text-sm sm:text-base text-text-primary shadow-lg flex items-center gap-2">
             <GripIcon />
             {activeItem.text}
           </div>

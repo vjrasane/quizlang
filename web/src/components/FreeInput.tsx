@@ -5,13 +5,15 @@ import { ActionButton } from "./ActionButton";
 
 interface Props {
   answer: Answer;
-  onAnswer: (correct: boolean) => void;
-  displayCorrect?: boolean;
+  onAnswer: (correct: boolean, answer: unknown) => void;
+  reviewAnswer?: string;
 }
 
-export function FreeInput({ answer, onAnswer, displayCorrect = true }: Props) {
-  const [value, setValue] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+export function FreeInput({ answer, onAnswer, reviewAnswer }: Props) {
+  const readOnly = reviewAnswer !== undefined;
+  const [value, setValue] = useState(reviewAnswer ?? "");
+  const [submitted, setSubmitted] = useState(readOnly);
+  const [locked, setLocked] = useState(readOnly);
   const { t } = useLocale();
 
   const isCorrect =
@@ -20,41 +22,40 @@ export function FreeInput({ answer, onAnswer, displayCorrect = true }: Props) {
   const handleSubmit = () => {
     if (!value.trim()) return;
     setSubmitted(true);
-    onAnswer(isCorrect);
+    if (isCorrect) setLocked(true);
+    onAnswer(isCorrect, value.trim());
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+    if (submitted && !locked) setSubmitted(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !submitted) handleSubmit();
+    if (e.key === "Enter" && !locked) handleSubmit();
   };
 
-  const inputStyle = submitted && displayCorrect
+  const inputStyle = submitted
     ? isCorrect
       ? "border-correct bg-correct-bg"
       : "border-incorrect bg-incorrect-bg"
-    : submitted
-      ? "border-selected bg-selected-bg"
-      : "border-border";
+    : "border-border";
 
   return (
     <div className="flex flex-col gap-3">
       <input
         type="text"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={handleChange}
         onKeyDown={handleKeyDown}
-        disabled={submitted}
+        disabled={locked}
         placeholder={t("typeYourAnswer")}
         className={`w-full px-3 sm:px-4 py-3 rounded-lg border bg-bg-2 text-sm sm:text-base text-text-primary placeholder:text-text-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent ${inputStyle}`}
       />
-      {submitted && displayCorrect && !isCorrect && (
-        <p className="text-sm text-correct">
-          {t("correctAnswer")} {answer.text}
-        </p>
-      )}
       {submitted && answer.notes && (
         <p className="text-sm text-text-muted px-2.5 py-1.5 rounded border border-black/15 bg-black/5">{answer.notes}</p>
       )}
-      {!submitted && (
+      {!locked && (
         <ActionButton onClick={handleSubmit} disabled={!value.trim()}>
           {t("submit")}
         </ActionButton>
