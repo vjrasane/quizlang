@@ -3,6 +3,8 @@ import { SingleChoice } from "./SingleChoice";
 import { MultiChoice } from "./MultiChoice";
 import { FreeInput } from "./FreeInput";
 import { Categorize } from "./Categorize";
+import { Sorting } from "./Sorting";
+import { Matching } from "./Matching";
 import { routes } from "@/src/routes";
 
 interface Props {
@@ -58,6 +60,22 @@ export function QuestionView({ section, onAnswer, seed, reviewAnswer }: Props) {
       {question.type === "Categorize" && (
         <Categorize
           categories={question.categories}
+          onAnswer={onAnswer}
+          seed={seed}
+          reviewAnswer={reviewAnswer as Record<number, number | null> | undefined}
+        />
+      )}
+      {question.type === "Sorting" && (
+        <Sorting
+          items={question.items}
+          onAnswer={onAnswer}
+          seed={seed}
+          reviewAnswer={reviewAnswer as number[] | undefined}
+        />
+      )}
+      {question.type === "Matching" && (
+        <Matching
+          pairs={question.pairs}
           onAnswer={onAnswer}
           seed={seed}
           reviewAnswer={reviewAnswer as Record<number, number | null> | undefined}
