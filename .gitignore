@@ -14,3 +14,4 @@ devenv.local.yaml
 node_modules
 .env
 .mcp.json
+.astro/
