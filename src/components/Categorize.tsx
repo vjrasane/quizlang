@@ -15,7 +15,7 @@ import {
 import type { Category } from "@/src/types/quiz";
 import { useLocale } from "@/src/i18n";
 import { ActionButton } from "./ActionButton";
-import { mulberry32 } from "./QuizPlayer";
+import { mulberry32 } from "../utils";
 
 interface Props {
   categories: Category[];
@@ -129,12 +129,21 @@ function ResultItem({
   return (
     <div className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg ${style}`}>
       {text}
-      {!correct && notes && <p className="text-xs opacity-75 mt-1.5 px-2 py-1 rounded border border-black/15 bg-black/5">{notes}</p>}
+      {!correct && notes && (
+        <p className="text-xs opacity-75 mt-1.5 px-2 py-1 rounded border border-black/15 bg-black/5">
+          {notes}
+        </p>
+      )}
     </div>
   );
 }
 
-export function Categorize({ categories, onAnswer, seed, reviewAnswer }: Props) {
+export function Categorize({
+  categories,
+  onAnswer,
+  seed,
+  reviewAnswer,
+}: Props) {
   const { t } = useLocale();
   const readOnly = reviewAnswer !== undefined;
 
@@ -150,9 +159,9 @@ export function Categorize({ categories, onAnswer, seed, reviewAnswer }: Props) 
     return items.sort(() => rng() - 0.5);
   }, [categories, seed]);
 
-  const [assignments, setAssignments] = useState<
-    Record<number, number | null>
-  >(() => reviewAnswer ?? Object.fromEntries(allItems.map((_, i) => [i, null])));
+  const [assignments, setAssignments] = useState<Record<number, number | null>>(
+    () => reviewAnswer ?? Object.fromEntries(allItems.map((_, i) => [i, null])),
+  );
   const [submitted, setSubmitted] = useState(readOnly);
   const [locked, setLocked] = useState(readOnly);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -200,9 +209,7 @@ export function Categorize({ categories, onAnswer, seed, reviewAnswer }: Props) 
     onAnswer(allCorrect, { ...assignments });
   };
 
-  const activeItemIdx = activeId
-    ? Number(activeId.replace("item-", ""))
-    : null;
+  const activeItemIdx = activeId ? Number(activeId.replace("item-", "")) : null;
   const activeItem = activeItemIdx !== null ? allItems[activeItemIdx] : null;
 
   return (
@@ -250,11 +257,7 @@ export function Categorize({ categories, onAnswer, seed, reviewAnswer }: Props) 
                 </div>
               </div>
             ) : (
-              <DroppableZone
-                key={catIdx}
-                id={`cat-${catIdx}`}
-                label={cat.text}
-              >
+              <DroppableZone key={catIdx} id={`cat-${catIdx}`} label={cat.text}>
                 {allItems
                   .map((item, i) => ({ ...item, idx: i }))
                   .filter((_, i) => assignments[i] === catIdx)

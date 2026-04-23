@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import type { Quiz, QuizItem } from "@/src/types/quiz";
+import { mulberry32, djb2Hash, generateSeed, shuffle } from "@/src/utils";
 import { QuestionView } from "./QuestionView";
 import { ActionButton } from "./ActionButton";
 import { useLocale, LocaleOverrideProvider, type Locale } from "@/src/i18n";
@@ -13,28 +14,6 @@ interface PersistedQuizState {
 }
 
 const STORAGE_PREFIX = "quizlang-quiz-";
-
-export function mulberry32(seed: number): () => number {
-  let s = seed | 0;
-  return () => {
-    s = (s + 0x6d2b79f5) | 0;
-    let t = Math.imul(s ^ (s >>> 15), 1 | s);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function djb2Hash(str: string): string {
-  let hash = 5381;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) + hash + str.charCodeAt(i)) | 0;
-  }
-  return (hash >>> 0).toString(36);
-}
-
-function generateSeed(): number {
-  return Math.floor(Math.random() * 2 ** 32);
-}
 
 function loadQuizState(quizId: string): PersistedQuizState | null {
   try {
@@ -60,15 +39,6 @@ function clearQuizState(quizId: string): void {
 
 function collectQuestions(items: QuizItem[]): QuizItem[] {
   return items.filter((item) => item.question);
-}
-
-function shuffle<T>(arr: T[], rng: () => number): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
 }
 
 function shuffleAnswers(item: QuizItem, rng: () => number): QuizItem {
@@ -119,19 +89,11 @@ export const QuizPlayer: React.FC<{ quizId: string; quiz: Quiz }> = ({
   quizId,
   quiz,
 }) => {
+  const quizHash = useMemo(() => djb2Hash(JSON.stringify(quiz)), [quiz]);
+
   const frontmatterLocale = (quiz.frontmatter as any)?.language as
     | Locale
     | undefined;
-
-  return (
-    <LocaleOverrideProvider value={frontmatterLocale ?? null}>
-      <QuizPlayerInner quiz={quiz} quizId={quizId} />
-    </LocaleOverrideProvider>
-  );
-};
-
-function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
-  const quizHash = useMemo(() => djb2Hash(JSON.stringify(quiz)), [quiz]);
 
   const quizName = (quiz.frontmatter as any)?.name ?? quizId;
 
@@ -164,8 +126,6 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
     boolean | null
   >(null);
   const [currentAnswer, setCurrentAnswer] = useState<unknown>(null);
-
-  const { t } = useLocale();
 
   const questions = useMemo(() => prepareQuestions(quiz, seed), [quiz, seed]);
 
@@ -200,8 +160,6 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
     );
   }
 
-  const question = questions[current];
-
   const handleAnswer = (correct: boolean, answer: unknown) => {
     if (firstAttemptCorrect === null) {
       setFirstAttemptCorrect(correct);
@@ -232,6 +190,54 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
   };
 
   return (
+    <LocaleOverrideProvider value={frontmatterLocale ?? null}>
+      <QuestionStep
+        quizName={quizName}
+        question={questions[current]}
+        onAnswer={handleAnswer}
+        onReset={handleReset}
+        onNext={handleNext}
+        onPrevious={handleBack}
+        isReviewing={isReviewing}
+        seed={seed}
+        answers={answers}
+        currentCorrect={currentCorrect}
+        total={total}
+        current={current}
+      />
+    </LocaleOverrideProvider>
+  );
+};
+
+const QuestionStep: React.FC<{
+  quizName: string;
+  question: QuizItem;
+  current: number;
+  total: number;
+  onAnswer: (correct: boolean, answer: unknown) => void;
+  onNext: () => void;
+  onPrevious: () => void;
+  onReset: () => void;
+  isReviewing: boolean;
+  seed: number;
+  answers: unknown[];
+  currentCorrect: boolean | null;
+}> = ({
+  quizName,
+  current,
+  total,
+  question,
+  onAnswer,
+  onNext,
+  onPrevious,
+  onReset,
+  isReviewing,
+  seed,
+  answers,
+  currentCorrect,
+}) => {
+  const { t } = useLocale();
+  return (
     <div>
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-base sm:text-lg font-semibold text-text-secondary truncate mr-2">
@@ -239,7 +245,7 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
         </h1>
         <div className="flex items-center gap-3">
           <button
-            onClick={handleReset}
+            onClick={onReset}
             className="text-xs text-text-muted hover:text-accent transition-colors cursor-pointer"
           >
             {t("reset")}
@@ -257,7 +263,7 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
       </div>
       {current > 0 && (
         <button
-          onClick={handleBack}
+          onClick={onPrevious}
           className="text-sm text-text-muted hover:text-accent transition-colors cursor-pointer mb-2"
         >
           ← {t("goBack")}
@@ -267,7 +273,7 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
         <QuestionView
           key={isReviewing ? `review-${current}` : `${seed}-${current}`}
           item={question}
-          onAnswer={handleAnswer}
+          onAnswer={onAnswer}
           seed={seed ^ (current + 1)}
           reviewAnswer={isReviewing ? answers[current] : undefined}
         />
@@ -278,7 +284,7 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
         )}
         {(isReviewing || currentCorrect === true) && (
           <div className="mt-4 sm:mt-6">
-            <ActionButton onClick={handleNext}>
+            <ActionButton onClick={onNext}>
               {!isReviewing && current + 1 >= total
                 ? t("seeResults")
                 : t("next")}
@@ -288,7 +294,7 @@ function QuizPlayerInner({ quiz, quizId }: { quiz: Quiz; quizId: string }) {
       </div>
     </div>
   );
-}
+};
 
 const QuizFinishedStep: React.FC<{
   results: boolean[];

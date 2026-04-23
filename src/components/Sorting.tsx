@@ -21,7 +21,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { SortItem } from "@/src/types/quiz";
 import { useLocale } from "@/src/i18n";
 import { ActionButton } from "./ActionButton";
-import { mulberry32 } from "./QuizPlayer";
+import { mulberry32 } from "../utils";
 
 interface Props {
   items: SortItem[];
@@ -107,8 +107,10 @@ export function Sorting({ items, onAnswer, seed, reviewAnswer }: Props) {
     return arr;
   }, [items, seed]);
 
-  const [order, setOrder] = useState<SortItem[]>(
-    () => reviewAnswer ? reviewAnswer.map((key) => items.find((it) => it.key === key)!) : shuffled,
+  const [order, setOrder] = useState<SortItem[]>(() =>
+    reviewAnswer
+      ? reviewAnswer.map((key) => items.find((it) => it.key === key)!)
+      : shuffled,
   );
   const [submitted, setSubmitted] = useState(readOnly);
   const [locked, setLocked] = useState(readOnly);
@@ -142,9 +144,14 @@ export function Sorting({ items, onAnswer, seed, reviewAnswer }: Props) {
 
   const handleSubmit = () => {
     setSubmitted(true);
-    const allCorrect = order.every((item, i) => item.key === correctOrder[i].key);
+    const allCorrect = order.every(
+      (item, i) => item.key === correctOrder[i].key,
+    );
     if (allCorrect) setLocked(true);
-    onAnswer(allCorrect, order.map((it) => it.key));
+    onAnswer(
+      allCorrect,
+      order.map((it) => it.key),
+    );
   };
 
   const activeItem = activeId

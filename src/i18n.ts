@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback, createContext, useContext } from "react";
+import { useState, useCallback, createContext, useContext } from "react";
 
 export type Locale = "en" | "fi";
 
+export const defaultLocale: Locale = "en";
+export const locales: Locale[] = ["en", "fi"];
+
 const STORAGE_KEY = "quizlang-locale";
-const EVENT_NAME = "locale-change";
 
 const translations: Record<string, Record<Locale, string>> = {
   loading: { en: "Loading...", fi: "Ladataan..." },
@@ -45,16 +47,22 @@ export function t(
   return text;
 }
 
-function isLocale(val: unknown): val is Locale {
+export function isLocale(val: unknown): val is Locale {
   return val === "en" || val === "fi";
 }
 
-function getStoredLocale(): Locale | null {
+export function getStoredLocale(): Locale | null {
   try {
     const val = localStorage.getItem(STORAGE_KEY);
     if (isLocale(val)) return val;
   } catch {}
   return null;
+}
+
+export function storeLocale(locale: Locale): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, locale);
+  } catch {}
 }
 
 function getBrowserLocale(): Locale | null {
@@ -65,37 +73,34 @@ function getBrowserLocale(): Locale | null {
   return null;
 }
 
+function getUrlLocale(): Locale {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const path = window.location.pathname.slice(base.length);
+  const segment = path.split("/")[1];
+  return isLocale(segment) ? segment : defaultLocale;
+}
+
+/** Preferred locale for redirects: stored > browser > default. */
+export function getPreferredLocale(): Locale {
+  return getStoredLocale() ?? getBrowserLocale() ?? defaultLocale;
+}
+
 const LocaleOverrideContext = createContext<Locale | null>(null);
 export const LocaleOverrideProvider = LocaleOverrideContext.Provider;
 
 export function useLocale() {
   const override = useContext(LocaleOverrideContext);
-
-  const [siteLocale, setSiteLocaleState] = useState<Locale>(
-    () => getStoredLocale() ?? getBrowserLocale() ?? "en",
-  );
+  const [urlLocale] = useState(getUrlLocale);
 
   const setLocale = useCallback((next: Locale) => {
-    setSiteLocaleState(next);
-    try {
-      localStorage.setItem(STORAGE_KEY, next);
-    } catch {}
-    window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: next }));
+    storeLocale(next);
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    const path = window.location.pathname.slice(base.length);
+    const rest = path.replace(/^\/[a-z]{2}(\/|$)/, "/");
+    window.location.href = `${base}/${next}${rest}`;
   }, []);
 
-  useEffect(() => {
-    const stored = getStoredLocale();
-    if (stored && stored !== siteLocale) setSiteLocaleState(stored);
-
-    const handler = (e: Event) => {
-      const next = (e as CustomEvent<Locale>).detail;
-      if (next === "en" || next === "fi") setSiteLocaleState(next);
-    };
-    window.addEventListener(EVENT_NAME, handler);
-    return () => window.removeEventListener(EVENT_NAME, handler);
-  }, []);
-
-  const locale = override ?? siteLocale;
+  const locale = override ?? urlLocale;
 
   const translate = useCallback(
     (key: string, params?: Record<string, string | number>) =>

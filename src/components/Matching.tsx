@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import type { MatchPair } from "@/src/types/quiz";
 import { useLocale } from "@/src/i18n";
 import { ActionButton } from "./ActionButton";
-import { mulberry32 } from "./QuizPlayer";
+import { mulberry32 } from "../utils";
 
 interface Props {
   pairs: MatchPair[];
@@ -118,10 +118,14 @@ export function Matching({ pairs, onAnswer, seed, reviewAnswer }: Props) {
                   className="flex flex-col gap-1.5 rounded-lg border border-dashed border-border p-0.5"
                 >
                   <div className="flex gap-2">
-                    <div className={`flex-1 px-3 sm:px-4 py-3 rounded-lg border text-sm sm:text-base ${itemStyle}`}>
+                    <div
+                      className={`flex-1 px-3 sm:px-4 py-3 rounded-lg border text-sm sm:text-base ${itemStyle}`}
+                    >
                       {pairs[leftIdx].left}
                     </div>
-                    <div className={`flex-1 px-3 sm:px-4 py-3 rounded-lg border text-sm sm:text-base ${itemStyle}`}>
+                    <div
+                      className={`flex-1 px-3 sm:px-4 py-3 rounded-lg border text-sm sm:text-base ${itemStyle}`}
+                    >
                       {pairs[rightIdx].right}
                     </div>
                   </div>
@@ -165,40 +169,41 @@ export function Matching({ pairs, onAnswer, seed, reviewAnswer }: Props) {
       )}
 
       {/* Unmatched columns */}
-      {!submitted && (unassignedLeft.length > 0 || unassignedRight.length > 0) && (
-        <div className="flex gap-3 items-start">
-          <div className="flex flex-col gap-2 flex-1">
-            {unassignedLeft.map((i) => (
-              <button
-                key={i}
-                onClick={() => handleTapLeft(i)}
-                className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border text-sm sm:text-base text-text-primary transition-colors ${
-                  selectedLeft === i
-                    ? "bg-bg-2 border-accent"
-                    : "bg-bg-2 border-border"
-                } ${locked ? "cursor-default" : "cursor-pointer"}`}
-              >
-                {pairs[i].left}
-              </button>
-            ))}
+      {!submitted &&
+        (unassignedLeft.length > 0 || unassignedRight.length > 0) && (
+          <div className="flex gap-3 items-start">
+            <div className="flex flex-col gap-2 flex-1">
+              {unassignedLeft.map((i) => (
+                <button
+                  key={i}
+                  onClick={() => handleTapLeft(i)}
+                  className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border text-sm sm:text-base text-text-primary transition-colors ${
+                    selectedLeft === i
+                      ? "bg-bg-2 border-accent"
+                      : "bg-bg-2 border-border"
+                  } ${locked ? "cursor-default" : "cursor-pointer"}`}
+                >
+                  {pairs[i].left}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-col gap-2 flex-1">
+              {unassignedRight.map((i) => (
+                <button
+                  key={i}
+                  onClick={() => handleTapRight(i)}
+                  className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border text-sm sm:text-base text-text-primary transition-colors ${
+                    selectedRight === i
+                      ? "bg-bg-2 border-accent"
+                      : "bg-bg-2 border-border"
+                  } ${locked ? "cursor-default" : "cursor-pointer"}`}
+                >
+                  {pairs[i].right}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col gap-2 flex-1">
-            {unassignedRight.map((i) => (
-              <button
-                key={i}
-                onClick={() => handleTapRight(i)}
-                className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border text-sm sm:text-base text-text-primary transition-colors ${
-                  selectedRight === i
-                    ? "bg-bg-2 border-accent"
-                    : "bg-bg-2 border-border"
-                } ${locked ? "cursor-default" : "cursor-pointer"}`}
-              >
-                {pairs[i].right}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+        )}
 
       {!submitted && !locked && (
         <ActionButton onClick={handleSubmit} disabled={!allAssigned}>
