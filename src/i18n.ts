@@ -1,8 +1,9 @@
-import { useState, useCallback, createContext, useContext } from "react";
-import type { Locale } from "./types/quiz";
+import { useCallback, createContext, useContext } from "react";
+import { Locale } from "./types/quiz";
+export type { Locale } from "./types/quiz";
 
-export const defaultLocale: Locale = "en";
-export const locales: Locale[] = ["en", "fi"];
+export const defaultLocale: Locale = "fi";
+export const locales = Locale.options;
 
 const STORAGE_KEY = "quizlang-locale";
 
@@ -69,7 +70,7 @@ export function translateWith(translations: Translations) {
 }
 
 export function isLocale(val: unknown): val is Locale {
-  return val === "en" || val === "fi";
+  return Locale.safeParse(val).success;
 }
 
 export function getStoredLocale(): Locale | null {

@@ -33,7 +33,7 @@ export const QuizList: React.FC<{
           {quizzes.map((q) => (
             <a
               key={q.id}
-              href={routes.play(q.id)}
+              href={`../play/${q.id}`}
               className="block bg-bg-1 border border-border rounded-lg p-4 sm:p-5 hover:border-accent transition-colors"
             >
               <div className="flex items-start justify-between gap-3 sm:gap-4">

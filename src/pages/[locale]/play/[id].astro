@@ -3,7 +3,8 @@ import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
 import Base from "@/src/layouts/Base.astro";
 import { QuizPlayer } from "@/src/components/QuizPlayer";
-import { locales } from "@/src/i18n";
+import { locales, translations } from "@/src/i18n";
+import { Locale } from "@/src/types/quiz";
 import { getHash } from "@/src/quiz-storage";
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -15,16 +16,17 @@ export const getStaticPaths: GetStaticPaths = async () => {
   );
 };
 
-const { id } = Astro.params;
+const { id, locale } = Astro.params;
 const entries = await getCollection("quizzes");
 const entry = entries.find((e) => e.id === id)!;
 const quiz = entry.data;
 const hash = getHash(quiz)
-const name = (quiz.frontmatter as Record<string, unknown> | undefined)?.name as string ?? id;
+const name = quiz.frontmatter?.name ?? String(id);
+const lang = quiz.frontmatter?.language ?? Locale.parse(locale)
 ---
 
 <Base title={name}>
   <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-    <QuizPlayer quizId={entry.id} quizHash={hash} quiz={quiz} client:only="react" />
+    <QuizPlayer quizId={entry.id} quizName={name} quizHash={hash} quiz={quiz} translations={translations[lang]} client:only="react" />
   </div>
 </Base>

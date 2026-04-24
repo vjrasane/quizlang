@@ -15,8 +15,9 @@ export default defineConfig({
     },
   },
   redirects: {
-    "/": "/list",
+    "/list": "/",
   },
+  trailingSlash: "always",
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],

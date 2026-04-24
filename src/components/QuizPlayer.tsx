@@ -9,12 +9,7 @@ import {
 import { mulberry32, shuffle } from "@/src/utils";
 import { QuestionView } from "./QuestionView";
 import { ActionButton } from "./ActionButton";
-import {
-  useLocale,
-  LocaleOverrideProvider,
-  type Translations,
-  TranslationsContext,
-} from "@/src/i18n";
+import { useLocale, type Translations, TranslationsContext } from "@/src/i18n";
 import { routes } from "@/src/routes";
 import {
   initQuizState,
@@ -91,12 +86,11 @@ type Step = number | "review";
 
 export const QuizPlayer: React.FC<{
   quizId: string;
+  quizName: string;
   quizHash: string;
   quiz: Quiz;
   translations: Translations;
-}> = ({ quizId, quizHash, quiz, translations }) => {
-  const quizName = (quiz.frontmatter as any)?.name ?? quizId;
-
+}> = ({ quizId, quizHash, quizName, quiz, translations }) => {
   const [state, setState] = useState<QuizState>(initQuizState);
   const [currentStep, setCurrentStep] = useState<Step>(0);
 
