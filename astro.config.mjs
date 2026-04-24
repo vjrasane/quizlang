@@ -8,16 +8,15 @@ export default defineConfig({
   site: isProd ? "https://vjrasane.github.io" : undefined,
   base: isProd ? "/quizlang" : undefined,
   i18n: {
-    defaultLocale: "en",
+    defaultLocale: "fi",
     locales: ["en", "fi"],
     routing: {
       prefixDefaultLocale: true,
     },
   },
   redirects: {
-    "/list": "/",
+    "/": "/list",
   },
-  trailingSlash: "always",
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],

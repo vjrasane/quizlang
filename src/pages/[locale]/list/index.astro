@@ -27,12 +27,12 @@ const quizzes = entries.map((entry) => {
 });
 
 const { locale } = Astro.params;
-const lang = Locale.parse(locale);
+const pageLocale = Locale.parse(locale);
 
 ---
 
 <Base title="Quizzes">
   <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-    <QuizList quizzes={quizzes} translations={translations[lang]} client:only="react" />
+    <QuizList quizzes={quizzes} translations={translations[pageLocale]} locale={pageLocale} client:only="react" />
   </div>
 </Base>

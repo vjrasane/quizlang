@@ -22,11 +22,12 @@ const entry = entries.find((e) => e.id === id)!;
 const quiz = entry.data;
 const hash = getHash(quiz)
 const name = quiz.frontmatter?.name ?? String(id);
-const lang = quiz.frontmatter?.language ?? Locale.parse(locale)
+const pageLocale = Locale.parse(locale)
+const lang = quiz.frontmatter?.language ?? pageLocale
 ---
 
 <Base title={name}>
   <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-    <QuizPlayer quizId={entry.id} quizName={name} quizHash={hash} quiz={quiz} translations={translations[lang]} client:only="react" />
+    <QuizPlayer quizId={entry.id} quizName={name} quizHash={hash} quiz={quiz} translations={translations[lang]} locale={pageLocale} client:only="react" />
   </div>
 </Base>

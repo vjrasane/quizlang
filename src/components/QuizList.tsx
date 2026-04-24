@@ -5,9 +5,9 @@ import {
   useLocale,
   type Translations,
 } from "@/src/i18n";
-import { routes } from "@/src/routes";
 import { getScore, initQuizState, loadQuizState } from "../quiz-storage";
-import type { QuizState } from "../types/quiz";
+import type { QuizState, Locale } from "../types/quiz";
+import { routesWithLocale } from "../routes";
 
 interface QuizEntry {
   id: string;
@@ -20,9 +20,11 @@ interface QuizEntry {
 
 export const QuizList: React.FC<{
   quizzes: QuizEntry[];
+  locale: Locale;
   translations: Translations;
-}> = ({ quizzes, translations }) => {
+}> = ({ quizzes, locale, translations }) => {
   const t = translateWith(translations);
+  const routes = routesWithLocale(locale);
   return (
     <TranslationsContext.Provider value={translations}>
       <div>
@@ -33,7 +35,7 @@ export const QuizList: React.FC<{
           {quizzes.map((q) => (
             <a
               key={q.id}
-              href={`../play/${q.id}`}
+              href={routes.play(q.id)}
               className="block bg-bg-1 border border-border rounded-lg p-4 sm:p-5 hover:border-accent transition-colors"
             >
               <div className="flex items-start justify-between gap-3 sm:gap-4">

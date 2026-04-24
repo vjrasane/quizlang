@@ -5,18 +5,24 @@ import {
   type AnswerState,
   type QuizState,
   type StepState,
+  type Locale,
 } from "@/src/types/quiz";
 import { mulberry32, shuffle } from "@/src/utils";
 import { QuestionView } from "./QuestionView";
 import { ActionButton } from "./ActionButton";
-import { useLocale, type Translations, TranslationsContext } from "@/src/i18n";
-import { routes } from "@/src/routes";
+import {
+  useLocale,
+  type Translations,
+  TranslationsContext,
+  LocaleContext,
+} from "@/src/i18n";
 import {
   initQuizState,
   loadQuizState,
   saveQuizState,
   isComplete,
 } from "../quiz-storage";
+import { useRoutes } from "../routes";
 
 type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 
@@ -89,8 +95,9 @@ export const QuizPlayer: React.FC<{
   quizName: string;
   quizHash: string;
   quiz: Quiz;
+  locale: Locale;
   translations: Translations;
-}> = ({ quizId, quizHash, quizName, quiz, translations }) => {
+}> = ({ quizId, quizHash, quizName, quiz, locale, translations }) => {
   const [state, setState] = useState<QuizState>(initQuizState);
   const [currentStep, setCurrentStep] = useState<Step>(0);
 
@@ -113,33 +120,35 @@ export const QuizPlayer: React.FC<{
   }, [quiz, state?.seed]);
 
   return (
-    <TranslationsContext.Provider value={translations}>
-      {(() => {
-        switch (currentStep) {
-          case "review":
-            return (
-              <QuizFinishedStep
-                quizName={quizName}
-                questions={questions}
-                state={state}
-                onStateChange={setState}
-                onCurrentStepChange={setCurrentStep}
-              />
-            );
-          default:
-            return (
-              <QuestionStep
-                quizName={quizName}
-                questions={questions}
-                state={state}
-                onStateChange={setState}
-                currentStep={currentStep}
-                onCurrentStepChange={setCurrentStep}
-              />
-            );
-        }
-      })()}
-    </TranslationsContext.Provider>
+    <LocaleContext.Provider value={locale}>
+      <TranslationsContext.Provider value={translations}>
+        {(() => {
+          switch (currentStep) {
+            case "review":
+              return (
+                <QuizFinishedStep
+                  quizName={quizName}
+                  questions={questions}
+                  state={state}
+                  onStateChange={setState}
+                  onCurrentStepChange={setCurrentStep}
+                />
+              );
+            default:
+              return (
+                <QuestionStep
+                  quizName={quizName}
+                  questions={questions}
+                  state={state}
+                  onStateChange={setState}
+                  currentStep={currentStep}
+                  onCurrentStepChange={setCurrentStep}
+                />
+              );
+          }
+        })()}
+      </TranslationsContext.Provider>
+    </LocaleContext.Provider>
   );
 };
 
@@ -268,6 +277,7 @@ const QuizFinishedStep: React.FC<{
   onCurrentStepChange: SetState<Step>;
 }> = ({ questions, quizName, state, onStateChange, onCurrentStepChange }) => {
   const { t } = useLocale();
+  const routes = useRoutes();
 
   const score = state.steps.filter((s) => s.answers[0]?.correct).length;
   const total = questions.length;

@@ -1,14 +1,16 @@
 ---
 import type { GetStaticPaths } from "astro";
+import  { Locale } from "@/src/types/quiz";
 import { locales } from "@/src/i18n";
-import { routes } from "@/src/routes";
+import { routesWithLocale } from "@/src/routes";
 
 export const getStaticPaths: GetStaticPaths = () => {
   return locales.map((locale) => ({ params: { locale } }));
 };
 
 const { locale } = Astro.params;
+const routes = routesWithLocale(Locale.parse(locale))
 
-return Astro.redirect(routes.listWithLocale(locale))
+return Astro.redirect(routes.list)
 ---
 

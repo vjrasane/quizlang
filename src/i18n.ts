@@ -100,7 +100,9 @@ export function getPreferredLocale(): Locale {
   return getStoredLocale() ?? getBrowserLocale() ?? defaultLocale;
 }
 
-export const TranslationsContext = createContext<Translations>(en);
+export const LocaleContext = createContext<Locale>("fi");
+
+export const TranslationsContext = createContext<Translations>(fi);
 
 export function useLocale() {
   const ts = useContext(TranslationsContext);

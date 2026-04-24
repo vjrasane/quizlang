@@ -1,11 +1,19 @@
+import { useContext, useMemo } from "react";
+import { LocaleContext, type Locale } from "./i18n";
+
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-export const routes = {
-  base,
-  index: `${base}/`,
-  list: `${base}/list/`,
-  listWithLocale: (locale: string) => `${base}/${locale}/list/`,
-  play: (id: string) => `${base}/play/${id}/`,
-  playWithLocale: (id: string, locale: string) =>
-    `${base}/${locale}/play/${id}/`,
-} as const;
+export const routesWithLocale = (locale: Locale) => {
+  const basePath = `${base}/${locale}`;
+  return {
+    index: basePath,
+    list: `${basePath}/list`,
+    play: (id: string) => `${basePath}/play/${id}/`,
+  };
+};
+
+export const useRoutes = () => {
+  const locale = useContext(LocaleContext);
+  const routes = useMemo(() => routesWithLocale(locale), [locale]);
+  return routes;
+};

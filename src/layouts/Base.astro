@@ -1,14 +1,19 @@
 ---
 import "@/src/styles/global.css";
 import { SettingsMenu } from "@/src/components/SettingsMenu";
-import { routes } from "@/src/routes";
+import { routesWithLocale } from "@/src/routes";
+import { defaultLocale, type Locale } from "../i18n";
 
 interface Props {
   title?: string;
+  locale?: Locale;
 }
 
-const { title } = Astro.props;
+const { title, locale } = Astro.props;
 const pageTitle = [title, "Quizlang"].filter(Boolean).join(" | ");
+
+const pageLocale = locale ?? defaultLocale;
+const routes = routesWithLocale(pageLocale)
 ---
 
 <!doctype html>
