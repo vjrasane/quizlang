@@ -5,7 +5,7 @@ import { ActionButton } from "./ActionButton";
 
 interface Props {
   answers: Answer[];
-  onAnswer: (correct: boolean, answer: unknown) => void;
+  onAnswer: (correct: boolean, value: number[]) => void;
   reviewAnswer?: number[];
 }
 

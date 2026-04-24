@@ -1,44 +1,46 @@
-import { useState, useEffect, useMemo } from "react";
-import type { Quiz, QuizItem } from "@/src/types/quiz";
-import { mulberry32, djb2Hash, generateSeed, shuffle } from "@/src/utils";
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  type Quiz,
+  type QuizItem,
+  type AnswerState,
+  type QuizState,
+  type StepState,
+} from "@/src/types/quiz";
+import { mulberry32, shuffle } from "@/src/utils";
 import { QuestionView } from "./QuestionView";
 import { ActionButton } from "./ActionButton";
-import { useLocale, LocaleOverrideProvider, type Locale } from "@/src/i18n";
+import {
+  useLocale,
+  LocaleOverrideProvider,
+  type Translations,
+  TranslationsContext,
+} from "@/src/i18n";
 import { routes } from "@/src/routes";
+import {
+  initQuizState,
+  loadQuizState,
+  saveQuizState,
+  isComplete,
+} from "../quiz-storage";
 
-interface PersistedQuizState {
-  seed: number;
-  quizHash: string;
-  results: boolean[];
-  answers: unknown[];
+type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
+
+function getCurrentStep(state: QuizState): number {
+  const completeIndex = state.steps.findLastIndex(isComplete);
+  if (completeIndex < 0) return 0;
+  return completeIndex + 1;
 }
 
-const STORAGE_PREFIX = "quizlang-quiz-";
-
-function loadQuizState(quizId: string): PersistedQuizState | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_PREFIX + quizId);
-    if (!raw) return null;
-    return JSON.parse(raw) as PersistedQuizState;
-  } catch {
-    return null;
+function getStepChange(current: Step, change: -1 | 1, max: number): Step {
+  switch (change) {
+    case -1:
+      if (current === "review") return max;
+      if (current === 0) return 0;
+    case 1:
+      if (current === "review") return "review";
+      if (current >= max) return "review";
   }
-}
-
-function saveQuizState(quizId: string, state: PersistedQuizState): void {
-  try {
-    localStorage.setItem(STORAGE_PREFIX + quizId, JSON.stringify(state));
-  } catch {}
-}
-
-function clearQuizState(quizId: string): void {
-  try {
-    localStorage.removeItem(STORAGE_PREFIX + quizId);
-  } catch {}
-}
-
-function collectQuestions(items: QuizItem[]): QuizItem[] {
-  return items.filter((item) => item.question);
+  return current + change;
 }
 
 function shuffleAnswers(item: QuizItem, rng: () => number): QuizItem {
@@ -74,7 +76,7 @@ function prepareQuestions(quiz: Quiz, seed: number): QuizItem[] {
   const shouldShuffleQuestions = (fm?.shuffle_questions as boolean) ?? false;
   const globalShuffleAnswers = (fm?.shuffle_answers as boolean) ?? true;
 
-  let questions = collectQuestions(quiz.items);
+  let questions = quiz.items.filter((item) => item.question);
   if (shouldShuffleQuestions) questions = shuffle(questions, rng);
 
   return questions.map((item) => {
@@ -85,158 +87,122 @@ function prepareQuestions(quiz: Quiz, seed: number): QuizItem[] {
   });
 }
 
-export const QuizPlayer: React.FC<{ quizId: string; quiz: Quiz }> = ({
-  quizId,
-  quiz,
-}) => {
-  const quizHash = useMemo(() => djb2Hash(JSON.stringify(quiz)), [quiz]);
+type Step = number | "review";
 
-  const frontmatterLocale = (quiz.frontmatter as any)?.language as
-    | Locale
-    | undefined;
-
+export const QuizPlayer: React.FC<{
+  quizId: string;
+  quizHash: string;
+  quiz: Quiz;
+  translations: Translations;
+}> = ({ quizId, quizHash, quiz, translations }) => {
   const quizName = (quiz.frontmatter as any)?.name ?? quizId;
 
-  const [seed, setSeed] = useState<number>(() => {
-    const stored = loadQuizState(quizId);
-    if (stored && stored.quizHash === quizHash) return stored.seed;
-    return generateSeed();
-  });
-
-  const [results, setResults] = useState<boolean[]>(() => {
-    const stored = loadQuizState(quizId);
-    if (stored && stored.quizHash === quizHash) return stored.results;
-    return [];
-  });
-
-  const [answers, setAnswers] = useState<unknown[]>(() => {
-    const stored = loadQuizState(quizId);
-    if (stored && stored.quizHash === quizHash) return stored.answers ?? [];
-    return [];
-  });
-
-  const [current, setCurrent] = useState(() => {
-    const stored = loadQuizState(quizId);
-    if (stored && stored.quizHash === quizHash) return stored.results.length;
-    return 0;
-  });
-
-  const [currentCorrect, setCurrentCorrect] = useState<boolean | null>(null);
-  const [firstAttemptCorrect, setFirstAttemptCorrect] = useState<
-    boolean | null
-  >(null);
-  const [currentAnswer, setCurrentAnswer] = useState<unknown>(null);
-
-  const questions = useMemo(() => prepareQuestions(quiz, seed), [quiz, seed]);
-
-  const total = questions.length;
-  const finished = current >= total;
-  const isReviewing = current < results.length;
+  const [state, setState] = useState<QuizState>(initQuizState);
+  const [currentStep, setCurrentStep] = useState<Step>(0);
 
   useEffect(() => {
-    saveQuizState(quizId, { seed, quizHash, results, answers });
-  }, [quizId, seed, quizHash, results, answers]);
+    const loaded = loadQuizState(quizId, quizHash);
+    if (!loaded) return;
+    setState(loaded);
+    const stateStep = getCurrentStep(loaded);
+    setCurrentStep(stateStep <= quiz.items.length - 1 ? stateStep : "review");
+  }, [quizId, quizHash]);
 
-  const handleReset = () => {
-    clearQuizState(quizId);
-    setSeed(generateSeed());
-    setResults([]);
-    setAnswers([]);
-    setCurrent(0);
-    setCurrentCorrect(null);
-    setFirstAttemptCorrect(null);
-    setCurrentAnswer(null);
-  };
+  useEffect(() => {
+    if (!state.steps.length) return;
+    saveQuizState(quizId, quizHash, state);
+  }, [state]);
 
-  if (finished) {
-    return (
-      <QuizFinishedStep
-        results={results}
-        quizName={quizName}
-        questions={questions}
-        onReset={handleReset}
-        onBack={() => setCurrent((c) => c - 1)}
-      />
-    );
-  }
-
-  const handleAnswer = (correct: boolean, answer: unknown) => {
-    if (firstAttemptCorrect === null) {
-      setFirstAttemptCorrect(correct);
-    }
-    setCurrentCorrect(correct);
-    setCurrentAnswer(answer);
-  };
-
-  const handleNext = () => {
-    if (isReviewing) {
-      setCurrent((c) => c + 1);
-    } else {
-      setResults((prev) => [...prev, firstAttemptCorrect!]);
-      setAnswers((prev) => [...prev, currentAnswer]);
-      setCurrent((c) => c + 1);
-      setCurrentCorrect(null);
-      setFirstAttemptCorrect(null);
-      setCurrentAnswer(null);
-    }
-  };
-
-  const handleBack = () => {
-    if (!isReviewing) {
-      setCurrentCorrect(null);
-      setFirstAttemptCorrect(null);
-    }
-    setCurrent((c) => c - 1);
-  };
+  const questions = useMemo(() => {
+    if (!state?.seed) return [];
+    return prepareQuestions(quiz, state.seed);
+  }, [quiz, state?.seed]);
 
   return (
-    <LocaleOverrideProvider value={frontmatterLocale ?? null}>
-      <QuestionStep
-        quizName={quizName}
-        question={questions[current]}
-        onAnswer={handleAnswer}
-        onReset={handleReset}
-        onNext={handleNext}
-        onPrevious={handleBack}
-        isReviewing={isReviewing}
-        seed={seed}
-        answers={answers}
-        currentCorrect={currentCorrect}
-        total={total}
-        current={current}
-      />
-    </LocaleOverrideProvider>
+    <TranslationsContext.Provider value={translations}>
+      {(() => {
+        switch (currentStep) {
+          case "review":
+            return (
+              <QuizFinishedStep
+                quizName={quizName}
+                questions={questions}
+                state={state}
+                onStateChange={setState}
+                onCurrentStepChange={setCurrentStep}
+              />
+            );
+          default:
+            return (
+              <QuestionStep
+                quizName={quizName}
+                questions={questions}
+                state={state}
+                onStateChange={setState}
+                currentStep={currentStep}
+                onCurrentStepChange={setCurrentStep}
+              />
+            );
+        }
+      })()}
+    </TranslationsContext.Provider>
   );
 };
 
 const QuestionStep: React.FC<{
   quizName: string;
-  question: QuizItem;
-  current: number;
-  total: number;
-  onAnswer: (correct: boolean, answer: unknown) => void;
-  onNext: () => void;
-  onPrevious: () => void;
-  onReset: () => void;
-  isReviewing: boolean;
-  seed: number;
-  answers: unknown[];
-  currentCorrect: boolean | null;
+  questions: QuizItem[];
+  state: QuizState;
+  onStateChange: SetState<QuizState>;
+  currentStep: number;
+  onCurrentStepChange: SetState<Step>;
 }> = ({
   quizName,
-  current,
-  total,
-  question,
-  onAnswer,
-  onNext,
-  onPrevious,
-  onReset,
-  isReviewing,
-  seed,
-  answers,
-  currentCorrect,
+  questions,
+  state,
+  onStateChange,
+  currentStep,
+  onCurrentStepChange,
 }) => {
   const { t } = useLocale();
+  const question = questions[currentStep];
+
+  const currentAnswers = state.steps[currentStep]?.answers;
+  const correctAnswer = currentAnswers?.find((a) => a.correct);
+  const lastAnswer = currentAnswers?.[currentAnswers.length - 1];
+
+  const isReviewing = correctAnswer !== undefined;
+
+  const handleReset = () => onStateChange((prev) => ({ ...prev, steps: [] }));
+
+  const handleBack = () =>
+    onCurrentStepChange((prev) =>
+      getStepChange(prev, -1, questions.length - 1),
+    );
+
+  const handleNext = () =>
+    onCurrentStepChange((prev) => getStepChange(prev, 1, questions.length - 1));
+
+  const appendAnswer = (step: StepState, answer: AnswerState): StepState => {
+    const answers = [...step.answers, answer];
+    return { ...step, answers };
+  };
+
+  const addAnswer = (steps: StepState[], answer: AnswerState): StepState[] => {
+    if (steps.length <= currentStep)
+      return [...steps, { type: "question", answers: [answer] }];
+    return steps.map((s, i) =>
+      i === currentStep ? appendAnswer(s, answer) : s,
+    );
+  };
+
+  const handleAnswer = (answer: AnswerState) => {
+    onStateChange((prev) => ({
+      ...prev,
+      steps: addAnswer(prev.steps, answer),
+    }));
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
@@ -245,47 +211,51 @@ const QuestionStep: React.FC<{
         </h1>
         <div className="flex items-center gap-3">
           <button
-            onClick={onReset}
+            onClick={handleReset}
             className="text-xs text-text-muted hover:text-accent transition-colors cursor-pointer"
           >
             {t("reset")}
           </button>
           <span className="text-sm text-text-muted whitespace-nowrap">
-            {current + 1} / {total}
+            {currentStep + 1} / {questions.length}
           </span>
         </div>
       </div>
       <div className="w-full h-1 bg-bg-2 rounded-full mb-2">
         <div
           className="h-1 bg-accent rounded-full transition-all"
-          style={{ width: `${((current + 1) / total) * 100}%` }}
+          style={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
         />
       </div>
-      {current > 0 && (
+      {currentStep > 0 && (
         <button
-          onClick={onPrevious}
-          className="text-sm text-text-muted hover:text-accent transition-colors cursor-pointer mb-2"
+          onClick={handleBack}
+          className="text-sm text-text-muted hover:text-accent transition-colors cursor-pointer mb-2 flex flex-row justify-baseline align-baseline"
         >
-          ← {t("goBack")}
+          <div>←</div> <div>{t("goBack")}</div>
         </button>
       )}
       <div className="bg-bg-1 border border-border rounded-lg p-4 sm:p-6">
         <QuestionView
-          key={isReviewing ? `review-${current}` : `${seed}-${current}`}
+          key={
+            isReviewing
+              ? `review-${currentStep}`
+              : `${state.seed}-${currentStep}`
+          }
           item={question}
-          onAnswer={onAnswer}
-          seed={seed ^ (current + 1)}
-          reviewAnswer={isReviewing ? answers[current] : undefined}
+          onAnswer={handleAnswer}
+          seed={state.seed ^ (currentStep + 1)}
+          reviewAnswer={isReviewing ? correctAnswer : undefined}
         />
-        {!isReviewing && currentCorrect === false && (
+        {lastAnswer && !lastAnswer.correct && (
           <p className="text-sm text-incorrect mt-4 sm:mt-6">
             {t("wrongTryAgain")}
           </p>
         )}
-        {(isReviewing || currentCorrect === true) && (
+        {isReviewing && lastAnswer && lastAnswer.correct && (
           <div className="mt-4 sm:mt-6">
-            <ActionButton onClick={onNext}>
-              {!isReviewing && current + 1 >= total
+            <ActionButton onClick={handleNext}>
+              {!isReviewing && currentStep + 1 >= questions.length
                 ? t("seeResults")
                 : t("next")}
             </ActionButton>
@@ -297,19 +267,26 @@ const QuestionStep: React.FC<{
 };
 
 const QuizFinishedStep: React.FC<{
-  results: boolean[];
   questions: QuizItem[];
   quizName: string;
-  onReset: () => void;
-  onBack: () => void;
-}> = ({ results, questions, quizName, onReset, onBack }) => {
+  state: QuizState;
+  onStateChange: SetState<QuizState>;
+  onCurrentStepChange: SetState<Step>;
+}> = ({ questions, quizName, state, onStateChange, onCurrentStepChange }) => {
   const { t } = useLocale();
 
-  const score = results.filter(Boolean).length;
+  const score = state.steps.filter((s) => s.answers[0]?.correct).length;
   const total = questions.length;
-  const incorrectIndices = results
-    .map((correct, i) => (correct ? -1 : i))
+  const incorrectIndices = state.steps
+    .map((s, i) => (s.answers[0]?.correct ? -1 : i))
     .filter((i) => i >= 0);
+
+  const handleReset = () => onStateChange((prev) => ({ ...prev, steps: [] }));
+
+  const handleBack = () =>
+    onCurrentStepChange((prev) =>
+      getStepChange(prev, -1, questions.length - 1),
+    );
 
   return (
     <div>
@@ -342,7 +319,7 @@ const QuizFinishedStep: React.FC<{
           </div>
         )}
         <div className="flex gap-3 justify-center">
-          <ActionButton onClick={onReset}>{t("tryAgain")}</ActionButton>
+          <ActionButton onClick={handleReset}>{t("tryAgain")}</ActionButton>
           <a
             href={routes.index}
             className="px-5 sm:px-6 py-2 bg-bg-2 text-text-primary font-semibold rounded-lg border border-border hover:border-accent transition-colors"
@@ -351,7 +328,7 @@ const QuizFinishedStep: React.FC<{
           </a>
         </div>
         <button
-          onClick={onBack}
+          onClick={handleBack}
           className="text-sm text-text-muted hover:text-accent transition-colors cursor-pointer mt-4"
         >
           ← {t("goBack")}

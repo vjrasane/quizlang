@@ -1,6 +1,7 @@
 ---
 import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
+import { routes } from "@/src/routes";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const entries = await getCollection("quizzes");
@@ -16,6 +17,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 const { quizLanguage } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const id = Astro.params.id;
+
+if (quizLanguage) 
+  return Astro.redirect(routes.playWithLocale(id, quizLanguage))
+
 ---
 
 <html>

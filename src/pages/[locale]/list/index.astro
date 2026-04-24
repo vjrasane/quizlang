@@ -1,0 +1,38 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import Base from "@/src/layouts/Base.astro";
+import { QuizList } from "@/src/components/QuizList";
+import { locales, translations } from "@/src/i18n";
+import { Locale } from "@/src/types/quiz";
+import { getHash } from "@/src/quiz-storage";
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return locales.map((locale) => ({ params: { locale } }));
+};
+
+const entries = await getCollection("quizzes");
+
+const quizzes = entries.map((entry) => {
+  const quiz = entry.data;
+  const fm = quiz.frontmatter as Record<string, unknown> | undefined;
+  return {
+    id: entry.id,
+    hash: getHash(quiz),
+    name: (fm?.name as string) ?? entry.id,
+    category: fm?.category as string | undefined,
+    tags: (fm?.tags as string[]) ?? [],
+    questionCount: quiz.items.length,
+  };
+});
+
+const { locale } = Astro.params;
+const lang = Locale.parse(locale);
+
+---
+
+<Base title="Quizzes">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <QuizList quizzes={quizzes} translations={translations[lang]} client:only="react" />
+  </div>
+</Base>

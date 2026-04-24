@@ -1,50 +1,71 @@
 import { useState, useCallback, createContext, useContext } from "react";
-
-export type Locale = "en" | "fi";
+import type { Locale } from "./types/quiz";
 
 export const defaultLocale: Locale = "en";
 export const locales: Locale[] = ["en", "fi"];
 
 const STORAGE_KEY = "quizlang-locale";
 
-const translations: Record<string, Record<Locale, string>> = {
-  loading: { en: "Loading...", fi: "Ladataan..." },
-  percentCorrect: { en: "% correct", fi: "% oikein" },
-  tryAgain: { en: "Try again", fi: "Yritä uudelleen" },
-  allQuizzes: { en: "All quizzes", fi: "Kaikki visat" },
-  seeResults: { en: "See results", fi: "Katso tulokset" },
-  next: { en: "Next", fi: "Seuraava" },
-  submit: { en: "Submit", fi: "Vastaa" },
-  typeYourAnswer: { en: "Type your answer...", fi: "Kirjoita vastauksesi..." },
-  correctAnswer: { en: "Correct answer:", fi: "Oikea vastaus:" },
-  items: { en: "Items", fi: "Kohteet" },
-  allItemsAssigned: {
-    en: "All items assigned",
-    fi: "Kaikki kohteet sijoitettu",
-  },
-  quizzes: { en: "Quizzes", fi: "Tietovisat" },
-  nQuestions: { en: "{n} questions", fi: "{n} kysymystä" },
-  questionCounter: { en: "Question", fi: "Kysymys" },
-  reset: { en: "Reset", fi: "Aloita alusta" },
-  incorrectQuestions: { en: "Incorrect answers", fi: "Väärät vastaukset" },
-  wrongTryAgain: { en: "Incorrect — try again!", fi: "Väärin — yritä uudelleen!" },
-  goBack: { en: "Back", fi: "Edellinen" },
+const en = {
+  loading: "Loading...",
+  percentCorrect: "% correct",
+  tryAgain: "Try again",
+  allQuizzes: "All quizzes",
+  seeResults: "See results",
+  next: "Next",
+  submit: "Submit",
+  typeYourAnswer: "Type your answer...",
+  correctAnswer: "Correct answer:",
+  items: "Items",
+  allItemsAssigned: "All items assigned",
+  quizzes: "Quizzes",
+  nQuestions: "{n} questions",
+  questionCounter: "Question",
+  reset: "Reset",
+  incorrectQuestions: "Incorrect answers",
+  wrongTryAgain: "Incorrect — try again!",
+  goBack: "Back",
+} as const;
+
+export type TranslationKey = keyof typeof en;
+export type Translations = Record<TranslationKey, string>;
+
+const fi: Translations = {
+  loading: "Ladataan...",
+  percentCorrect: "% oikein",
+  tryAgain: "Yritä uudelleen",
+  allQuizzes: "Kaikki visat",
+  seeResults: "Katso tulokset",
+  next: "Seuraava",
+  submit: "Vastaa",
+  typeYourAnswer: "Kirjoita vastauksesi...",
+  correctAnswer: "Oikea vastaus:",
+  items: "Kohteet",
+  allItemsAssigned: "Kaikki kohteet sijoitettu",
+  quizzes: "Tietovisat",
+  nQuestions: "{n} kysymystä",
+  questionCounter: "Kysymys",
+  reset: "Aloita alusta",
+  incorrectQuestions: "Väärät vastaukset",
+  wrongTryAgain: "Väärin — yritä uudelleen!",
+  goBack: "Edellinen",
 };
 
-export function t(
-  key: string,
-  locale: Locale,
-  params?: Record<string, string | number>,
-): string {
-  const entry = translations[key];
-  if (!entry) return key;
-  let text = entry[locale] ?? entry.en ?? key;
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      text = text.replace(`{${k}}`, String(v));
+export const translations: Record<Locale, Translations> = { en, fi };
+
+export function translateWith(translations: Translations) {
+  return function (
+    key: TranslationKey,
+    params?: Record<string, string | number>,
+  ): string {
+    let text = translations[key];
+    if (params) {
+      for (const [k, v] of Object.entries(params)) {
+        text = text.replace(`{${k}}`, String(v));
+      }
     }
-  }
-  return text;
+    return text;
+  };
 }
 
 export function isLocale(val: unknown): val is Locale {
@@ -73,40 +94,17 @@ function getBrowserLocale(): Locale | null {
   return null;
 }
 
-function getUrlLocale(): Locale {
-  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-  const path = window.location.pathname.slice(base.length);
-  const segment = path.split("/")[1];
-  return isLocale(segment) ? segment : defaultLocale;
-}
-
 /** Preferred locale for redirects: stored > browser > default. */
 export function getPreferredLocale(): Locale {
   return getStoredLocale() ?? getBrowserLocale() ?? defaultLocale;
 }
 
-const LocaleOverrideContext = createContext<Locale | null>(null);
-export const LocaleOverrideProvider = LocaleOverrideContext.Provider;
+export const TranslationsContext = createContext<Translations>(en);
 
 export function useLocale() {
-  const override = useContext(LocaleOverrideContext);
-  const [urlLocale] = useState(getUrlLocale);
+  const ts = useContext(TranslationsContext);
 
-  const setLocale = useCallback((next: Locale) => {
-    storeLocale(next);
-    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-    const path = window.location.pathname.slice(base.length);
-    const rest = path.replace(/^\/[a-z]{2}(\/|$)/, "/");
-    window.location.href = `${base}/${next}${rest}`;
-  }, []);
+  const translate = useCallback(translateWith(ts), [ts]);
 
-  const locale = override ?? urlLocale;
-
-  const translate = useCallback(
-    (key: string, params?: Record<string, string | number>) =>
-      t(key, locale, params),
-    [locale],
-  );
-
-  return { locale, setLocale, t: translate };
+  return { t: translate };
 }

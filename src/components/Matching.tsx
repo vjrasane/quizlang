@@ -6,9 +6,9 @@ import { mulberry32 } from "../utils";
 
 interface Props {
   pairs: MatchPair[];
-  onAnswer: (correct: boolean, answer: unknown) => void;
+  onAnswer: (correct: boolean, value: Record<string, number>) => void;
   seed?: number;
-  reviewAnswer?: Record<number, number | null>;
+  reviewAnswer?: Record<string, number>;
 }
 
 export function Matching({ pairs, onAnswer, seed, reviewAnswer }: Props) {
@@ -36,8 +36,8 @@ export function Matching({ pairs, onAnswer, seed, reviewAnswer }: Props) {
   }, [pairs, seed]);
 
   // maps leftIdx → rightIdx
-  const [assignments, setAssignments] = useState<Record<number, number>>(
-    () => (reviewAnswer as Record<number, number>) ?? {},
+  const [assignments, setAssignments] = useState<Record<string, number>>(
+    () => reviewAnswer ?? {},
   );
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);

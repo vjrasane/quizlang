@@ -25,7 +25,7 @@ import { mulberry32 } from "../utils";
 
 interface Props {
   items: SortItem[];
-  onAnswer: (correct: boolean, answer: unknown) => void;
+  onAnswer: (correct: boolean, value: number[]) => void;
   seed?: number;
   reviewAnswer?: number[];
 }

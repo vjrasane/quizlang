@@ -19,9 +19,9 @@ import { mulberry32 } from "../utils";
 
 interface Props {
   categories: Category[];
-  onAnswer: (correct: boolean, answer: unknown) => void;
+  onAnswer: (correct: boolean, value: Record<string, number | null>) => void;
   seed?: number;
-  reviewAnswer?: Record<number, number | null>;
+  reviewAnswer?: Record<string, number | null>;
 }
 
 const POOL_ID = "pool";

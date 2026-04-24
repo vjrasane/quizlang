@@ -14,6 +14,9 @@ export default defineConfig({
       prefixDefaultLocale: true,
     },
   },
+  redirects: {
+    "/": "/list",
+  },
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],

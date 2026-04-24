@@ -3,7 +3,7 @@ import type { Answer } from "@/src/types/quiz";
 
 interface Props {
   answers: Answer[];
-  onAnswer: (correct: boolean, answer: unknown) => void;
+  onAnswer: (correct: boolean, value: number) => void;
   reviewAnswer?: number;
 }
 
