@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Answer } from "@/src/types/quiz";
-import { useLocale } from "@/src/i18n";
 import { ActionButton } from "./ActionButton";
+import { useQuizLocale } from "./QuizPlayer";
 
 interface Props {
   answers: Answer[];
@@ -10,13 +10,13 @@ interface Props {
 }
 
 export function MultiChoice({ answers, onAnswer, reviewAnswer }: Props) {
+  const { t } = useQuizLocale();
   const readOnly = reviewAnswer !== undefined;
   const [selected, setSelected] = useState<Set<number>>(
     () => new Set(reviewAnswer ?? []),
   );
   const [submitted, setSubmitted] = useState(readOnly);
   const [locked, setLocked] = useState(readOnly);
-  const { t } = useLocale();
 
   const toggleSelection = (index: number) => {
     if (locked) return;
@@ -31,9 +31,7 @@ export function MultiChoice({ answers, onAnswer, reviewAnswer }: Props) {
 
   const handleSubmit = () => {
     setSubmitted(true);
-    const allCorrect = answers.every(
-      (a, i) => a.correct === selected.has(i),
-    );
+    const allCorrect = answers.every((a, i) => a.correct === selected.has(i));
     if (allCorrect) setLocked(true);
     onAnswer(allCorrect, [...selected]);
   };
@@ -62,15 +60,23 @@ export function MultiChoice({ answers, onAnswer, reviewAnswer }: Props) {
             disabled={locked}
             className={`w-full text-left px-3 sm:px-4 py-3 rounded-lg border transition-colors ${style} ${locked ? "cursor-default" : "cursor-pointer"}`}
           >
-            <span className="text-sm sm:text-base text-text-primary">{answer.text}</span>
+            <span className="text-sm sm:text-base text-text-primary">
+              {answer.text}
+            </span>
             {submitted && selected.has(i) && answer.notes && (
-              <p className="text-sm text-text-muted mt-2 px-2.5 py-1.5 rounded border border-black/15 bg-black/5">{answer.notes}</p>
+              <p className="text-sm text-text-muted mt-2 px-2.5 py-1.5 rounded border border-black/15 bg-black/5">
+                {answer.notes}
+              </p>
             )}
           </button>
         );
       })}
       {!locked && (
-        <ActionButton onClick={handleSubmit} disabled={selected.size === 0} className="mt-2">
+        <ActionButton
+          onClick={handleSubmit}
+          disabled={selected.size === 0}
+          className="mt-2"
+        >
           {t("submit")}
         </ActionButton>
       )}

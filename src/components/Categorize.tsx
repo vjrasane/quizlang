@@ -13,9 +13,9 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import type { Category } from "@/src/types/quiz";
-import { useLocale } from "@/src/i18n";
 import { ActionButton } from "./ActionButton";
 import { mulberry32 } from "../utils";
+import { useQuizLocale } from "./QuizPlayer";
 
 interface Props {
   categories: Category[];
@@ -144,7 +144,7 @@ export function Categorize({
   seed,
   reviewAnswer,
 }: Props) {
-  const { t } = useLocale();
+  const { t } = useQuizLocale();
   const readOnly = reviewAnswer !== undefined;
 
   const allItems = useMemo(() => {

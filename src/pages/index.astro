@@ -12,10 +12,14 @@ const fallback = defaultLocale;
     <meta charset="utf-8" />
     <script is:inline define:vars={{ base, storageKey, localeList, fallback }}>
       function detect() {
-        var stored = localStorage.getItem(storageKey);
-        if (localeList.includes(stored)) return stored;
-        var browser = navigator.language.split("-")[0];
-        if (localeList.includes(browser)) return browser;
+        try {
+          var stored = localStorage.getItem(storageKey);
+          if (localeList.includes(stored)) return stored;
+          var browser = navigator.language.split("-")[0];
+          if (localeList.includes(browser)) return browser;
+        } catch (error) {
+          console.error("Error detecting locale:", error);
+        }
         return fallback;
       }
       window.location.replace(base + "/" + detect() + "/");

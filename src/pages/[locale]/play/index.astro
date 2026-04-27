@@ -3,7 +3,7 @@ import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
 import Base from "@/src/layouts/Base.astro";
 import { QuizList } from "@/src/components/QuizList";
-import { locales, translations } from "@/src/i18n";
+import {  locales, translateWith } from "@/src/i18n";
 import { Locale } from "@/src/types/quiz";
 import { getHash } from "@/src/quiz-storage";
 
@@ -27,12 +27,12 @@ const quizzes = entries.map((entry) => {
 });
 
 const { locale } = Astro.params;
-const pageLocale = Locale.parse(locale);
+const lang = Locale.parse(locale)
+const t = translateWith(lang)
 
 ---
-
-<Base title="Quizzes">
+<Base title={t("quizzes")}>
   <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-    <QuizList quizzes={quizzes} translations={translations[pageLocale]} locale={pageLocale} client:only="react" />
+    <QuizList quizzes={quizzes} client:only="react" />
   </div>
 </Base>

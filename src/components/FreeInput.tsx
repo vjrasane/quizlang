@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Answer } from "@/src/types/quiz";
-import { useLocale } from "@/src/i18n";
 import { ActionButton } from "./ActionButton";
+import { useQuizLocale } from "./QuizPlayer";
 
 interface Props {
   answer: Answer;
@@ -10,11 +10,11 @@ interface Props {
 }
 
 export function FreeInput({ answer, onAnswer, reviewAnswer }: Props) {
+  const { t } = useQuizLocale();
   const readOnly = reviewAnswer !== undefined;
   const [value, setValue] = useState(reviewAnswer ?? "");
   const [submitted, setSubmitted] = useState(readOnly);
   const [locked, setLocked] = useState(readOnly);
-  const { t } = useLocale();
 
   const isCorrect =
     value.trim().toLowerCase() === answer.text.trim().toLowerCase();
@@ -53,7 +53,9 @@ export function FreeInput({ answer, onAnswer, reviewAnswer }: Props) {
         className={`w-full px-3 sm:px-4 py-3 rounded-lg border bg-bg-2 text-sm sm:text-base text-text-primary placeholder:text-text-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent ${inputStyle}`}
       />
       {submitted && answer.notes && (
-        <p className="text-sm text-text-muted px-2.5 py-1.5 rounded border border-black/15 bg-black/5">{answer.notes}</p>
+        <p className="text-sm text-text-muted px-2.5 py-1.5 rounded border border-black/15 bg-black/5">
+          {answer.notes}
+        </p>
       )}
       {!locked && (
         <ActionButton onClick={handleSubmit} disabled={!value.trim()}>

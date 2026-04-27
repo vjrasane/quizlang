@@ -19,9 +19,9 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { SortItem } from "@/src/types/quiz";
-import { useLocale } from "@/src/i18n";
 import { ActionButton } from "./ActionButton";
 import { mulberry32 } from "../utils";
+import { useQuizLocale } from "./QuizPlayer";
 
 interface Props {
   items: SortItem[];
@@ -89,7 +89,7 @@ function SortableItem({
 }
 
 export function Sorting({ items, onAnswer, seed, reviewAnswer }: Props) {
-  const { t } = useLocale();
+  const { t } = useQuizLocale();
   const readOnly = reviewAnswer !== undefined;
 
   const correctOrder = useMemo(

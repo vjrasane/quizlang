@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocale, type Locale } from "@/src/i18n";
+import { usePageLocale, type Locale } from "@/src/i18n";
 
 const languages: { locale: Locale; flag: string; label: string }[] = [
   { locale: "fi", flag: "🇫🇮", label: "Suomi" },
@@ -7,14 +7,15 @@ const languages: { locale: Locale; flag: string; label: string }[] = [
 ];
 
 export function SettingsMenu() {
-  const { locale, setLocale } = useLocale();
   const [open, setOpen] = useState(false);
+  const { setLocale, locale } = usePageLocale();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
     const handleClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     };
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);

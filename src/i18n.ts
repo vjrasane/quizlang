@@ -1,4 +1,4 @@
-import { useCallback, createContext, useContext } from "react";
+import { useCallback, useMemo } from "react";
 import { Locale } from "./types/quiz";
 export type { Locale } from "./types/quiz";
 
@@ -52,14 +52,15 @@ const fi: Translations = {
   goBack: "Edellinen",
 };
 
-export const translations: Record<Locale, Translations> = { en, fi };
+const translations: Record<Locale, Translations> = { en, fi };
 
-export function translateWith(translations: Translations) {
+export function translateWith(locale: Locale) {
+  const ts = translations[locale];
   return function (
     key: TranslationKey,
     params?: Record<string, string | number>,
   ): string {
-    let text = translations[key];
+    let text = ts[key];
     if (params) {
       for (const [k, v] of Object.entries(params)) {
         text = text.replace(`{${k}}`, String(v));
@@ -73,41 +74,39 @@ export function isLocale(val: unknown): val is Locale {
   return Locale.safeParse(val).success;
 }
 
-export function getStoredLocale(): Locale | null {
-  try {
-    const val = localStorage.getItem(STORAGE_KEY);
-    if (isLocale(val)) return val;
-  } catch {}
-  return null;
-}
-
-export function storeLocale(locale: Locale): void {
+function storeLocale(locale: Locale): void {
   try {
     localStorage.setItem(STORAGE_KEY, locale);
   } catch {}
 }
 
-function getBrowserLocale(): Locale | null {
-  try {
-    const lang = navigator.language.split("-")[0];
-    if (isLocale(lang)) return lang;
-  } catch {}
-  return null;
+function localeFromPathname(): Locale | undefined {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const seg = window.location.pathname
+    .slice(base.length)
+    .split("/")
+    .filter(Boolean)[0];
+  return isLocale(seg) ? seg : undefined;
 }
 
-/** Preferred locale for redirects: stored > browser > default. */
-export function getPreferredLocale(): Locale {
-  return getStoredLocale() ?? getBrowserLocale() ?? defaultLocale;
+export function useLocale(locale: Locale) {
+  const translate = useCallback(translateWith(locale), [locale]);
+
+  const handleSetLocale = useCallback(
+    (next: Locale) => {
+      storeLocale(next);
+      window.location.pathname = window.location.pathname.replace(
+        `/${locale}`,
+        `/${next}`,
+      );
+    },
+    [locale],
+  );
+
+  return { t: translate, locale, setLocale: handleSetLocale };
 }
 
-export const LocaleContext = createContext<Locale>("fi");
-
-export const TranslationsContext = createContext<Translations>(fi);
-
-export function useLocale() {
-  const ts = useContext(TranslationsContext);
-
-  const translate = useCallback(translateWith(ts), [ts]);
-
-  return { t: translate };
+export function usePageLocale() {
+  const locale = localeFromPathname();
+  return useLocale(locale ?? defaultLocale);
 }

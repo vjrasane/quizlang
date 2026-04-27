@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import type { MatchPair } from "@/src/types/quiz";
-import { useLocale } from "@/src/i18n";
 import { ActionButton } from "./ActionButton";
 import { mulberry32 } from "../utils";
+import { useQuizLocale } from "./QuizPlayer";
 
 interface Props {
   pairs: MatchPair[];
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export function Matching({ pairs, onAnswer, seed, reviewAnswer }: Props) {
-  const { t } = useLocale();
+  const { t } = useQuizLocale();
   const readOnly = reviewAnswer !== undefined;
 
   const shuffledLeft = useMemo(() => {
